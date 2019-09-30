@@ -1,0 +1,47 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: kanarydeployments.kanary.k8s-operators.dev
+spec:
+  group: kanary.k8s-operators.dev
+  names:
+    kind: KanaryDeployment
+    listKind: KanaryDeploymentList
+    plural: kanarydeployments
+    singular: kanarydeployment
+    shortNames:
+    - kd
+    - kanary
+  additionalPrinterColumns:
+  - name: Status
+    type: string
+    description: Status for the KanaryDeployment.
+    JSONPath: ".status.report.status"
+  - name: Deployment
+    type: string
+    description: Deployment Name used for the KanaryDeployment.
+    JSONPath: ".spec.deploymentName"
+  - name: StatefulSet
+      type: string
+      description: StatefulSet Name used for the KanaryDeployment.
+      JSONPath: ".spec.statefulSetName"
+  - name: Service
+    type: string
+    description: Service Name used for the KanaryDeployment.
+    JSONPath: ".spec.serviceName"
+  - name: Traffic
+    type: string
+    description: Traffic type used for the KanaryDeployment.
+    JSONPath: ".spec.traffic.source"
+  - name: Scale
+    type: string
+    description: Scale type used for the KanaryDeployment.
+    JSONPath: ".status.report.scale"
+  - name: Validation
+    type: string
+    description: Validation configuration used for the KanaryDeployment.
+    JSONPath: ".status.report.validation"
+  scope: Namespaced
+  version: v1alpha1
+  subresources:
+    status: {}
