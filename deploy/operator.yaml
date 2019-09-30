@@ -17,7 +17,7 @@ spec:
       serviceAccountName: kanary
       containers:
         - name: kanary
-          image: kanaryoperator/operator:latest
+          image: registry.cn-hangzhou.aliyuncs.com/k8s-kanary/kanary:v1
           ports:
           - containerPort: 60000
             name: metrics

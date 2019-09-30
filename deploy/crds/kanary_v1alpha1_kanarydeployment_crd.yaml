@@ -22,9 +22,9 @@ spec:
     description: Deployment Name used for the KanaryDeployment.
     JSONPath: ".spec.deploymentName"
   - name: StatefulSet
-      type: string
-      description: StatefulSet Name used for the KanaryDeployment.
-      JSONPath: ".spec.statefulSetName"
+    type: string
+    description: StatefulSet Name used for the KanaryDeployment.
+    JSONPath: ".spec.statefulSetName"
   - name: Service
     type: string
     description: Service Name used for the KanaryDeployment.
