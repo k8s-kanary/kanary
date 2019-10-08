@@ -10,7 +10,7 @@ import (
 
 	apps "k8s.io/api/apps/v1beta1"
 
-	kanaryv1alpha1 "github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1"
+	kanaryv1alpha1 "github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
 )
 
 // IsUpToDateDeployment returns true if the Deployment is up to date with the KanaryDeployment deployment template.

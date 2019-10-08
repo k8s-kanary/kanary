@@ -10,7 +10,7 @@ spec:
       matchExpressions:
       - {key: os, operator: In, values: [linux]}
     # url for downloading the package archive:
-    url: https://github.com/amadeusitgroup/kanary/releases/kubectl-kanary_vVERSION.zip
+    url: https://github.com/k8s-kanary/kanary/releases/kubectl-kanary_vVERSION.zip
     # sha256sum of the file downloaded above:
     sha256: "TAR_SHA256"
     files:                     # copy the used files out of the zip archive
@@ -21,7 +21,7 @@ spec:
       matchExpressions:
       - {key: os, operator: In, values: [darwin]}
     # url for downloading the package archive:
-    url: https://github.com/amadeusitgroup/kanary/releases/kubectl-kanary_vVERSION.zip
+    url: https://github.com/k8s-kanary/kanary/releases/kubectl-kanary_vVERSION.zip
     # sha256sum of the file downloaded above:
     sha256: "TAR_SHA256"
     files:                     # copy the used files out of the zip archive
@@ -30,6 +30,6 @@ spec:
     bin: "./kubectl-kanary"  # path to the plugin executable after copying files above
   shortDescription: kubectl plugin for kanary (canary deployment solution).
   description: |
-    This plugin provides helpers to user the canary deployment solution Kanary (http://github.com/amadeusitgroup/kanary)
+    This plugin provides helpers to user the canary deployment solution Kanary (http://github.com/k8s-kanary/kanary)
     It helps to visualize KanaryDeployment resources information, and generates
     the corresponding artifact from a kubernetes Deployment.

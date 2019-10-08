@@ -14,9 +14,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 
-	"github.com/amadeusitgroup/kanary/pkg/apis"
-	kanaryv1alpha1 "github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1"
-	"github.com/amadeusitgroup/kanary/pkg/controller/kanarydeployment/utils/comparison"
+	"github.com/k8s-kanary/kanary/pkg/apis"
+	kanaryv1alpha1 "github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
+	"github.com/k8s-kanary/kanary/pkg/controller/kanarydeployment/utils/comparison"
 )
 
 //PrepareSchemeForOwnerRef return the scheme required to write the kanary ownerreference

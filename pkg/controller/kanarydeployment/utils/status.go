@@ -15,8 +15,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
-	"github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1"
-	kanaryv1alpha1 "github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1"
+	"github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
+	kanaryv1alpha1 "github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
 )
 
 // UpdateKanaryDeploymentStatus used to update the KanaryDeployment.Status if it has changed.

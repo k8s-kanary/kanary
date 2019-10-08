@@ -1,4 +1,4 @@
-module github.com/amadeusitgroup/kanary
+module github.com/k8s-kanary/kanary
 
 go 1.12
 

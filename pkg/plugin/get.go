@@ -15,7 +15,7 @@ import (
 
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 
-	"github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1"
+	"github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
 )
 
 var (

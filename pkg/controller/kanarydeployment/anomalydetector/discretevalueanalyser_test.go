@@ -10,7 +10,7 @@ import (
 	"k8s.io/apimachinery/pkg/labels"
 	kv1 "k8s.io/client-go/listers/core/v1"
 
-	test "github.com/amadeusitgroup/kanary/test"
+	test "github.com/k8s-kanary/kanary/test"
 	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 )
 

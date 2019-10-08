@@ -16,8 +16,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 
-	kanaryv1alpha1 "github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1"
-	"github.com/amadeusitgroup/kanary/pkg/controller/kanarydeployment/utils"
+	kanaryv1alpha1 "github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
+	"github.com/k8s-kanary/kanary/pkg/controller/kanarydeployment/utils"
 )
 
 // NewHPA returns new scale.HPA instance

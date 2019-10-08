@@ -25,9 +25,9 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 	"sigs.k8s.io/controller-runtime/pkg/runtime/signals"
 
-	"github.com/amadeusitgroup/kanary/pkg/apis"
-	kanaryConfig "github.com/amadeusitgroup/kanary/pkg/config"
-	"github.com/amadeusitgroup/kanary/pkg/controller"
+	"github.com/k8s-kanary/kanary/pkg/apis"
+	kanaryConfig "github.com/k8s-kanary/kanary/pkg/config"
+	"github.com/k8s-kanary/kanary/pkg/controller"
 )
 
 var log = logf.Log.WithName("cmd")

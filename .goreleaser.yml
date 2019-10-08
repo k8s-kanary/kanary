@@ -9,14 +9,14 @@ builds:
   goarch:
   - amd64
   main: ./cmd/manager/main.go
-  ldflags: -s -w -X github.com/amadeusitgroup/kanary/pkg/utils.TAG={{.Version}} -X github.com/amadeusitgroup/kanary/pkg/utils.COMMIT={{.Commit}} -X github.com/amadeusitgroup/kanary/pkg/utils.DATE={{.Date}}
+  ldflags: -s -w -X github.com/k8s-kanary/kanary/pkg/utils.TAG={{.Version}} -X github.com/k8s-kanary/kanary/pkg/utils.COMMIT={{.Commit}} -X github.com/k8s-kanary/kanary/pkg/utils.DATE={{.Date}}
   binary: kanary
 - goos:
   - linux
   goarch:
   - amd64
   main: ./cmd/kubectl-kanary/main.go
-  ldflags: -s -w -X github.com/amadeusitgroup/kanary/pkg/utils.TAG={{.Version}} -X github.com/amadeusitgroup/kanary/pkg/utils.COMMIT={{.Commit}} -X github.com/amadeusitgroup/kanary/pkg/utils.DATE={{.Date}}
+  ldflags: -s -w -X github.com/k8s-kanary/kanary/pkg/utils.TAG={{.Version}} -X github.com/k8s-kanary/kanary/pkg/utils.COMMIT={{.Commit}} -X github.com/k8s-kanary/kanary/pkg/utils.DATE={{.Date}}
   binary: kubectl-plugin
 dockers:
   - name: kanary

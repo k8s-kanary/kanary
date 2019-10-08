@@ -3,7 +3,7 @@ package strategies
 import (
 	"testing"
 
-	"github.com/amadeusitgroup/kanary/pkg/controller/kanarydeployment/strategies/validation"
+	"github.com/k8s-kanary/kanary/pkg/controller/kanarydeployment/strategies/validation"
 )
 
 func Test_computeStatus(t *testing.T) {

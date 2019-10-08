@@ -37,3 +37,23 @@ rules:
   - '*'
   verbs:
   - '*'
+- apiGroups:
+  - apps.kruise.io
+  resources:
+  - statefulsets
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - apps.kruise.io
+  resources:
+  - statefulsets/status
+  verbs:
+  - get
+  - update
+  - patch

@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	kanaryv1alpha1 "github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1"
-	utilskd "github.com/amadeusitgroup/kanary/pkg/controller/kanarydeployment/utils"
-	"github.com/amadeusitgroup/kanary/test/e2e/utils"
+	kanaryv1alpha1 "github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
+	utilskd "github.com/k8s-kanary/kanary/pkg/controller/kanarydeployment/utils"
+	"github.com/k8s-kanary/kanary/test/e2e/utils"
 	framework "github.com/operator-framework/operator-sdk/pkg/test"
 	"github.com/operator-framework/operator-sdk/pkg/test/e2eutil"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

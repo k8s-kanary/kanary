@@ -12,7 +12,7 @@ Kubernetes 1.9.4
 export DEMO_PATH=/tmp/demo
 mkdir $DEMO_PATH && cd $DEMO_PATH
 export KUBERVISOR_PATH=$DEMO_PATH/src/github.com/amadeusitgroup/kubervisor
-export KANARY_PATH=$DEMO_PATH/src/github.com/amadeusitgroup/kanary
+export KANARY_PATH=$DEMO_PATH/src/github.com/k8s-kanary/kanary
 export GOPATH=$DEMO_PATH
 mkdir -p $DEMO_PATH/src/github.com/amadeusitgroup/
 git clone https://github.com/amadeusitgroup/kubervisor $KUBERVISOR_PATH

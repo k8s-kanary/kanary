@@ -12,8 +12,8 @@ import (
 	
 	kuriseclient "github.com/openkruise/kruise/pkg/client"
 	kruisev1alpha1 "github.com/openkruise/kruise/pkg/apis/apps/v1alpha1"
-	kanaryv1alpha1 "github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1"
-	"github.com/amadeusitgroup/kanary/pkg/controller/kanarydeployment/utils"
+	kanaryv1alpha1 "github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
+	"github.com/k8s-kanary/kanary/pkg/controller/kanarydeployment/utils"
 )
 
 // NewStatic returns new scale.Static instance

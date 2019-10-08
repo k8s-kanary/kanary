@@ -22,8 +22,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	
 	kruisev1alpha1 "github.com/openkruise/kruise/pkg/apis/apps/v1alpha1"
-	kanaryv1alpha1 "github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1"
-	"github.com/amadeusitgroup/kanary/pkg/controller/kanarydeployment/utils"
+	kanaryv1alpha1 "github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
+	"github.com/k8s-kanary/kanary/pkg/controller/kanarydeployment/utils"
 )
 
 // NewKanaryService returns new traffic.KanaryService instance

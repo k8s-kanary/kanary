@@ -7,9 +7,9 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 
-	kanaryv1alpha1 "github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1"
-	kanaryv1alpha1test "github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1/test"
-	utilstest "github.com/amadeusitgroup/kanary/pkg/controller/kanarydeployment/utils/test"
+	kanaryv1alpha1 "github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
+	kanaryv1alpha1test "github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1/test"
+	utilstest "github.com/k8s-kanary/kanary/pkg/controller/kanarydeployment/utils/test"
 )
 
 func TestNewCanaryServiceForKanaryDeployment(t *testing.T) {

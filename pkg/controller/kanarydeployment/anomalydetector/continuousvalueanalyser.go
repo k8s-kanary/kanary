@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/amadeusitgroup/kanary/pkg/pod"
+	"github.com/k8s-kanary/kanary/pkg/pod"
 	kapiv1 "k8s.io/api/core/v1"
 )
 

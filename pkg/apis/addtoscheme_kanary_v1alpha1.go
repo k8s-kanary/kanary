@@ -1,7 +1,7 @@
 package apis
 
 import (
-	"github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1"
+	"github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
 )
 
 func init() {

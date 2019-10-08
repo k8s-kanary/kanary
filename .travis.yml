@@ -10,7 +10,7 @@ env:
   global:
   - TAG=${TRAVIS_TAG:=${TRAVIS_COMMIT}}
   - GH_URL=https://amadeusitgroup.github.io/kanary
-go_import_path: github.com/amadeusitgroup/kanary
+go_import_path: github.com/k8s-kanary/kanary
 install:
 - ./hack/install_kube.sh
 - export KUBECONFIG="$(kind get kubeconfig-path)"

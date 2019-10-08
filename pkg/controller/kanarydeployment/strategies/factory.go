@@ -17,12 +17,12 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
-	kanaryv1alpha1 "github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1"
-	"github.com/amadeusitgroup/kanary/pkg/config"
-	"github.com/amadeusitgroup/kanary/pkg/controller/kanarydeployment/strategies/scale"
-	"github.com/amadeusitgroup/kanary/pkg/controller/kanarydeployment/strategies/traffic"
-	"github.com/amadeusitgroup/kanary/pkg/controller/kanarydeployment/strategies/validation"
-	"github.com/amadeusitgroup/kanary/pkg/controller/kanarydeployment/utils"
+	kanaryv1alpha1 "github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
+	"github.com/k8s-kanary/kanary/pkg/config"
+	"github.com/k8s-kanary/kanary/pkg/controller/kanarydeployment/strategies/scale"
+	"github.com/k8s-kanary/kanary/pkg/controller/kanarydeployment/strategies/traffic"
+	"github.com/k8s-kanary/kanary/pkg/controller/kanarydeployment/strategies/validation"
+	"github.com/k8s-kanary/kanary/pkg/controller/kanarydeployment/utils"
 )
 
 // Interface represent the strategy interface

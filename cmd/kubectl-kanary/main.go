@@ -8,7 +8,7 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 
-	"github.com/amadeusitgroup/kanary/pkg/plugin"
+	"github.com/k8s-kanary/kanary/pkg/plugin"
 )
 
 func main() {

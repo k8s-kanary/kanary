@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	kanaryv1alpha1 "github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1"
-	kanaryv1alpha1test "github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1/test"
-	utilstest "github.com/amadeusitgroup/kanary/pkg/controller/kanarydeployment/utils/test"
+	kanaryv1alpha1 "github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
+	kanaryv1alpha1test "github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1/test"
+	utilstest "github.com/k8s-kanary/kanary/pkg/controller/kanarydeployment/utils/test"
 
 	appsv1beta1 "k8s.io/api/apps/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -218,7 +218,7 @@ func Test_labelWatchImpl_Validation(t *testing.T) {
 				dryRun: tt.fields.dryRun,
 				config: tt.fields.config,
 			}
-			got, err := l.Validation(tt.args.kclient, reqLogger, tt.args.kd, tt.args.dep, tt.args.canaryDep)
+			got, err := l.Validation(tt.args.kclient, reqLogger, tt.args.kd, tt.args.dep, tt.args.canaryDep, nil)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("labelWatchImpl.Validation() error = %v, wantErr %v", err, tt.wantErr)
 				return

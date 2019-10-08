@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	kanaryv1alpha1 "github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1"
-	kanaryv1alpha1test "github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1/test"
-	utilstest "github.com/amadeusitgroup/kanary/pkg/controller/kanarydeployment/utils/test"
+	kanaryv1alpha1 "github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
+	kanaryv1alpha1test "github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1/test"
+	utilstest "github.com/k8s-kanary/kanary/pkg/controller/kanarydeployment/utils/test"
 
 	appsv1beta1 "k8s.io/api/apps/v1beta1"
 
@@ -181,7 +181,7 @@ func Test_manualImpl_Validation(t *testing.T) {
 				validationManualStatus: tt.fields.validationManualStatus,
 				dryRun:                 tt.fields.dryRun,
 			}
-			got, err := m.Validation(tt.args.kclient, reqLogger, tt.args.kd, tt.args.dep, tt.args.canaryDep)
+			got, err := m.Validation(tt.args.kclient, reqLogger, tt.args.kd, tt.args.dep, tt.args.canaryDep, nil)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("manualImpl.Validation() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -9,7 +9,7 @@ import (
 
 	"k8s.io/client-go/kubernetes/scheme"
 
-	"github.com/amadeusitgroup/kanary/pkg/apis"
+	"github.com/k8s-kanary/kanary/pkg/apis"
 )
 
 // NewClient returns new client instance

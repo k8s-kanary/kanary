@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"github.com/amadeusitgroup/kanary/pkg/controller/kanarydeployment"
+	"github.com/k8s-kanary/kanary/pkg/controller/kanarydeployment"
 )
 
 func init() {

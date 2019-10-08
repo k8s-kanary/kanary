@@ -15,9 +15,9 @@ import (
 	framework "github.com/operator-framework/operator-sdk/pkg/test"
 	"github.com/operator-framework/operator-sdk/pkg/test/e2eutil"
 
-	apis "github.com/amadeusitgroup/kanary/pkg/apis"
-	kanaryv1alpha1 "github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1"
-	"github.com/amadeusitgroup/kanary/test/e2e/utils"
+	apis "github.com/k8s-kanary/kanary/pkg/apis"
+	kanaryv1alpha1 "github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
+	"github.com/k8s-kanary/kanary/test/e2e/utils"
 )
 
 func init() {

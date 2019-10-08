@@ -3,7 +3,7 @@ package utils
 import (
 	"fmt"
 
-	"github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1"
+	"github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
 )
 
 // ValidateKanaryDeployment used to validate a KanaryDeployment

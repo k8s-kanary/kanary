@@ -9,7 +9,7 @@ import (
 
 	framework "github.com/operator-framework/operator-sdk/pkg/test"
 
-	kanaryv1alpha1 "github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1"
+	kanaryv1alpha1 "github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
 )
 
 // UpdateKanaryDeploymentFunc used to update a KanaryDeployment with retry and timeout policy

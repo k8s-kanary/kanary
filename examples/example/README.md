@@ -23,7 +23,7 @@ TODO: *check if v0.0.1 is what we want, maybe need to change it in deploy/operat
 ```
 git clone https://aorlinski@rndwww.nce.amadeus.net/git/scm/op1a/kanary.git
 
-cd $GOPATH/src/github.com/amadeusitgroup/kanary/
+cd $GOPATH/src/github.com/k8s-kanary/kanary/
 
 make TAG=v0.0.1 container
 ```

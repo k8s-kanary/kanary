@@ -25,12 +25,12 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
-	kanaryv1alpha1 "github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1"
-	"github.com/amadeusitgroup/kanary/pkg/config"
-	"github.com/amadeusitgroup/kanary/pkg/controller/kanarydeployment/strategies"
-	"github.com/amadeusitgroup/kanary/pkg/controller/kanarydeployment/utils"
-	"github.com/amadeusitgroup/kanary/pkg/controller/kanarydeployment/utils/comparison"
-	"github.com/amadeusitgroup/kanary/pkg/controller/kanarydeployment/utils/enqueue"
+	kanaryv1alpha1 "github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
+	"github.com/k8s-kanary/kanary/pkg/config"
+	"github.com/k8s-kanary/kanary/pkg/controller/kanarydeployment/strategies"
+	"github.com/k8s-kanary/kanary/pkg/controller/kanarydeployment/utils"
+	"github.com/k8s-kanary/kanary/pkg/controller/kanarydeployment/utils/comparison"
+	"github.com/k8s-kanary/kanary/pkg/controller/kanarydeployment/utils/enqueue"
 )
 
 var log = logf.Log.WithName("controller_kanarydeployment")
@@ -61,15 +61,6 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 
 	// Watch for changes to primary resource KanaryDeployment
 	err = c.Watch(&source.Kind{Type: &kanaryv1alpha1.KanaryDeployment{}}, &handler.EnqueueRequestForObject{})
-	if err != nil {
-		return err
-	}
-
-	// Watch for changes to secondary resource Deployment and requeue the owner KanaryDeployment
-	err = c.Watch(&source.Kind{Type: &appsv1beta1.Deployment{}}, &handler.EnqueueRequestForOwner{
-		IsController: true,
-		OwnerType:    &kanaryv1alpha1.KanaryDeployment{},
-	})
 	if err != nil {
 		return err
 	}

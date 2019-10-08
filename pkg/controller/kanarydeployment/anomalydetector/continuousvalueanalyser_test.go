@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	test "github.com/amadeusitgroup/kanary/test"
+	test "github.com/k8s-kanary/kanary/test"
 	kapiv1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kv1 "k8s.io/client-go/listers/core/v1"

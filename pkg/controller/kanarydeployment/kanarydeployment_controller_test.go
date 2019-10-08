@@ -21,9 +21,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 
-	kanaryv1alpha1 "github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1"
-	kanaryv1alpha1test "github.com/amadeusitgroup/kanary/pkg/apis/kanary/v1alpha1/test"
-	utilstest "github.com/amadeusitgroup/kanary/pkg/controller/kanarydeployment/utils/test"
+	kanaryv1alpha1 "github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
+	kanaryv1alpha1test "github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1/test"
+	utilstest "github.com/k8s-kanary/kanary/pkg/controller/kanarydeployment/utils/test"
 )
 
 func TestReconcileKanaryDeployment_Reconcile(t *testing.T) {
