@@ -5,11 +5,11 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// NewKanaryDeployment returns new KanaryDeploymentInstance
-func NewKanaryDeployment(name, namespace, serviceName string, replicas int32, options *NewKanaryDeploymentOptions) *kanaryv1alpha1.KanaryDeployment {
-	kd := &kanaryv1alpha1.KanaryDeployment{
+// NewKanaryStatefulset returns new KanaryStatefulsetInstance
+func NewKanaryStatefulset(name, namespace, serviceName string, replicas int32, options *NewKanaryStatefulsetOptions) *kanaryv1alpha1.KanaryStatefulset {
+	kd := &kanaryv1alpha1.KanaryStatefulset{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       "KanaryDeployment",
+			Kind:       "KanaryStatefulset",
 			APIVersion: kanaryv1alpha1.SchemeGroupVersion.String(),
 		},
 		ObjectMeta: metav1.ObjectMeta{
@@ -40,17 +40,17 @@ func NewKanaryDeployment(name, namespace, serviceName string, replicas int32, op
 		}
 	}
 
-	kd = kanaryv1alpha1.DefaultKanaryDeployment(kd)
+	kd = kanaryv1alpha1.DefaultKanaryStatefulset(kd)
 	kd.Spec.ServiceName = serviceName
 
 	return kd
 }
 
-// NewKanaryDeploymentOptions used to provide creation options
-type NewKanaryDeploymentOptions struct {
+// NewKanaryStatefulsetOptions used to provide creation options
+type NewKanaryStatefulsetOptions struct {
 	StartTime   *metav1.Time
-	Scale       *kanaryv1alpha1.KanaryDeploymentSpecScale
-	Traffic     *kanaryv1alpha1.KanaryDeploymentSpecTraffic
-	Validations *kanaryv1alpha1.KanaryDeploymentSpecValidationList
-	Status      *kanaryv1alpha1.KanaryDeploymentStatus
+	Scale       *kanaryv1alpha1.KanaryStatefulsetSpecScale
+	Traffic     *kanaryv1alpha1.KanaryStatefulsetSpecTraffic
+	Validations *kanaryv1alpha1.KanaryStatefulsetSpecValidationList
+	Status      *kanaryv1alpha1.KanaryStatefulsetStatus
 }

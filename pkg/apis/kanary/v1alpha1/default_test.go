@@ -9,31 +9,31 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func TestIsDefaultedKanaryDeployment(t *testing.T) {
+func TestIsDefaultedKanaryStatefulset(t *testing.T) {
 
 	tests := []struct {
 		name string
-		kd   *KanaryDeployment
+		kd   *KanaryStatefulset
 		want bool
 	}{
 		{
 			name: "not defaulted",
-			kd:   &KanaryDeployment{},
+			kd:   &KanaryStatefulset{},
 			want: false,
 		},
 		{
 			name: "is defaulted",
-			kd: &KanaryDeployment{
-				Spec: KanaryDeploymentSpec{
-					Scale: KanaryDeploymentSpecScale{
-						Static: &KanaryDeploymentSpecScaleStatic{
+			kd: &KanaryStatefulset{
+				Spec: KanaryStatefulsetSpec{
+					Scale: KanaryStatefulsetSpecScale{
+						Static: &KanaryStatefulsetSpecScaleStatic{
 							Replicas: NewInt32(1),
 						},
 					},
-					Traffic: KanaryDeploymentSpecTraffic{
-						Source: ServiceKanaryDeploymentSpecTrafficSource,
+					Traffic: KanaryStatefulsetSpecTraffic{
+						Source: ServiceKanaryStatefulsetSpecTrafficSource,
 					},
-					Validations: KanaryDeploymentSpecValidationList{
+					Validations: KanaryStatefulsetSpecValidationList{
 						ValidationPeriod: &metav1.Duration{
 							Duration: 15 * time.Minute,
 						},
@@ -43,10 +43,10 @@ func TestIsDefaultedKanaryDeployment(t *testing.T) {
 						MaxIntervalPeriod: &metav1.Duration{
 							Duration: 5 * time.Minute,
 						},
-						Items: []KanaryDeploymentSpecValidation{
+						Items: []KanaryStatefulsetSpecValidation{
 							{
-								Manual: &KanaryDeploymentSpecValidationManual{
-									StatusAfterDealine: NoneKanaryDeploymentSpecValidationManualDeadineStatus,
+								Manual: &KanaryStatefulsetSpecValidationManual{
+									StatusAfterDealine: NoneKanaryStatefulsetSpecValidationManualDeadineStatus,
 								},
 							},
 						},
@@ -57,26 +57,26 @@ func TestIsDefaultedKanaryDeployment(t *testing.T) {
 		},
 		{
 			name: "is defaulted",
-			kd: &KanaryDeployment{
-				Spec: KanaryDeploymentSpec{
-					Scale: KanaryDeploymentSpecScale{
-						Static: &KanaryDeploymentSpecScaleStatic{
+			kd: &KanaryStatefulset{
+				Spec: KanaryStatefulsetSpec{
+					Scale: KanaryStatefulsetSpecScale{
+						Static: &KanaryStatefulsetSpecScaleStatic{
 							Replicas: NewInt32(1),
 						},
 					},
-					Traffic: KanaryDeploymentSpecTraffic{
-						Source: ServiceKanaryDeploymentSpecTrafficSource,
+					Traffic: KanaryStatefulsetSpecTraffic{
+						Source: ServiceKanaryStatefulsetSpecTrafficSource,
 					},
-					Validations: KanaryDeploymentSpecValidationList{
+					Validations: KanaryStatefulsetSpecValidationList{
 						ValidationPeriod: &metav1.Duration{
 							Duration: 15 * time.Minute,
 						},
 						InitialDelay: &metav1.Duration{
 							Duration: 5 * time.Minute,
 						},
-						Items: []KanaryDeploymentSpecValidation{
+						Items: []KanaryStatefulsetSpecValidation{
 							{
-								PromQL: &KanaryDeploymentSpecValidationPromQL{
+								PromQL: &KanaryStatefulsetSpecValidationPromQL{
 									PrometheusService:        "s",
 									PodNameKey:               "pod",
 									ContinuousValueDeviation: &ContinuousValueDeviation{},
@@ -91,36 +91,36 @@ func TestIsDefaultedKanaryDeployment(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := IsDefaultedKanaryDeployment(tt.kd); got != tt.want {
-				t.Errorf("IsDefaultedKanaryDeployment() = %v, want %v", got, tt.want)
+			if got := IsDefaultedKanaryStatefulset(tt.kd); got != tt.want {
+				t.Errorf("IsDefaultedKanaryStatefulset() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestDefaultKanaryDeployment(t *testing.T) {
+func TestDefaultKanaryStatefulset(t *testing.T) {
 
 	tests := []struct {
 		name string
-		kd   *KanaryDeployment
-		want *KanaryDeployment
+		kd   *KanaryStatefulset
+		want *KanaryStatefulset
 	}{
 		{
 			name: "not defaulted",
-			kd: &KanaryDeployment{
-				Spec: KanaryDeploymentSpec{},
+			kd: &KanaryStatefulset{
+				Spec: KanaryStatefulsetSpec{},
 			},
-			want: &KanaryDeployment{
-				Spec: KanaryDeploymentSpec{
-					Scale: KanaryDeploymentSpecScale{
-						Static: &KanaryDeploymentSpecScaleStatic{
+			want: &KanaryStatefulset{
+				Spec: KanaryStatefulsetSpec{
+					Scale: KanaryStatefulsetSpecScale{
+						Static: &KanaryStatefulsetSpecScaleStatic{
 							Replicas: NewInt32(1),
 						},
 					},
-					Traffic: KanaryDeploymentSpecTraffic{
-						Source: NoneKanaryDeploymentSpecTrafficSource,
+					Traffic: KanaryStatefulsetSpecTraffic{
+						Source: NoneKanaryStatefulsetSpecTrafficSource,
 					},
-					Validations: KanaryDeploymentSpecValidationList{
+					Validations: KanaryStatefulsetSpecValidationList{
 						ValidationPeriod: &metav1.Duration{
 							Duration: 15 * time.Minute,
 						},
@@ -130,10 +130,10 @@ func TestDefaultKanaryDeployment(t *testing.T) {
 						MaxIntervalPeriod: &metav1.Duration{
 							Duration: 20 * time.Second,
 						},
-						Items: []KanaryDeploymentSpecValidation{
+						Items: []KanaryStatefulsetSpecValidation{
 							{
-								Manual: &KanaryDeploymentSpecValidationManual{
-									StatusAfterDealine: NoneKanaryDeploymentSpecValidationManualDeadineStatus,
+								Manual: &KanaryStatefulsetSpecValidationManual{
+									StatusAfterDealine: NoneKanaryStatefulsetSpecValidationManualDeadineStatus,
 								},
 							},
 						},
@@ -144,17 +144,17 @@ func TestDefaultKanaryDeployment(t *testing.T) {
 
 		{
 			name: "already some configuration",
-			kd: &KanaryDeployment{
-				Spec: KanaryDeploymentSpec{
-					Scale: KanaryDeploymentSpecScale{
-						Static: &KanaryDeploymentSpecScaleStatic{
+			kd: &KanaryStatefulset{
+				Spec: KanaryStatefulsetSpec{
+					Scale: KanaryStatefulsetSpecScale{
+						Static: &KanaryStatefulsetSpecScaleStatic{
 							Replicas: NewInt32(1),
 						},
 					},
-					Traffic: KanaryDeploymentSpecTraffic{
-						Source: KanaryServiceKanaryDeploymentSpecTrafficSource,
+					Traffic: KanaryStatefulsetSpecTraffic{
+						Source: KanaryServiceKanaryStatefulsetSpecTrafficSource,
 					},
-					Validations: KanaryDeploymentSpecValidationList{
+					Validations: KanaryStatefulsetSpecValidationList{
 						ValidationPeriod: &metav1.Duration{
 							Duration: 30 * time.Minute,
 						},
@@ -164,9 +164,9 @@ func TestDefaultKanaryDeployment(t *testing.T) {
 						MaxIntervalPeriod: &metav1.Duration{
 							Duration: 5 * time.Minute,
 						},
-						Items: []KanaryDeploymentSpecValidation{
+						Items: []KanaryStatefulsetSpecValidation{
 							{
-								PromQL: &KanaryDeploymentSpecValidationPromQL{
+								PromQL: &KanaryStatefulsetSpecValidationPromQL{
 									Query:                    "foo",
 									ContinuousValueDeviation: &ContinuousValueDeviation{},
 								},
@@ -175,17 +175,17 @@ func TestDefaultKanaryDeployment(t *testing.T) {
 					},
 				},
 			},
-			want: &KanaryDeployment{
-				Spec: KanaryDeploymentSpec{
-					Scale: KanaryDeploymentSpecScale{
-						Static: &KanaryDeploymentSpecScaleStatic{
+			want: &KanaryStatefulset{
+				Spec: KanaryStatefulsetSpec{
+					Scale: KanaryStatefulsetSpecScale{
+						Static: &KanaryStatefulsetSpecScaleStatic{
 							Replicas: NewInt32(1),
 						},
 					},
-					Traffic: KanaryDeploymentSpecTraffic{
-						Source: KanaryServiceKanaryDeploymentSpecTrafficSource,
+					Traffic: KanaryStatefulsetSpecTraffic{
+						Source: KanaryServiceKanaryStatefulsetSpecTrafficSource,
 					},
-					Validations: KanaryDeploymentSpecValidationList{
+					Validations: KanaryStatefulsetSpecValidationList{
 						ValidationPeriod: &metav1.Duration{
 							Duration: 30 * time.Minute,
 						},
@@ -195,9 +195,9 @@ func TestDefaultKanaryDeployment(t *testing.T) {
 						MaxIntervalPeriod: &metav1.Duration{
 							Duration: 5 * time.Minute,
 						},
-						Items: []KanaryDeploymentSpecValidation{
+						Items: []KanaryStatefulsetSpecValidation{
 							{
-								PromQL: &KanaryDeploymentSpecValidationPromQL{
+								PromQL: &KanaryStatefulsetSpecValidationPromQL{
 									PrometheusService: "prometheus:9090",
 									Query:             "foo",
 									PodNameKey:        "pod",
@@ -214,16 +214,16 @@ func TestDefaultKanaryDeployment(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := DefaultKanaryDeployment(tt.kd); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("DefaultKanaryDeployment() = %v, want %v", got, tt.want)
+			if got := DefaultKanaryStatefulset(tt.kd); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("DefaultKanaryStatefulset() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestIsDefaultedKanaryDeploymentSpecScale(t *testing.T) {
+func TestIsDefaultedKanaryStatefulsetSpecScale(t *testing.T) {
 	type args struct {
-		scale *KanaryDeploymentSpecScale
+		scale *KanaryStatefulsetSpecScale
 	}
 	tests := []struct {
 		name string
@@ -233,8 +233,8 @@ func TestIsDefaultedKanaryDeploymentSpecScale(t *testing.T) {
 		{
 			name: "already defaulted with static",
 			args: args{
-				scale: &KanaryDeploymentSpecScale{
-					Static: &KanaryDeploymentSpecScaleStatic{
+				scale: &KanaryStatefulsetSpecScale{
+					Static: &KanaryStatefulsetSpecScaleStatic{
 						Replicas: NewInt32(1),
 					},
 				},
@@ -244,14 +244,14 @@ func TestIsDefaultedKanaryDeploymentSpecScale(t *testing.T) {
 		{
 			name: "not defaulted at all",
 			args: args{
-				scale: &KanaryDeploymentSpecScale{},
+				scale: &KanaryStatefulsetSpecScale{},
 			},
 			want: false,
 		},
 		{
 			name: "HPA not defaulted (minReplicas, maxReplicas)",
 			args: args{
-				scale: &KanaryDeploymentSpecScale{
+				scale: &KanaryStatefulsetSpecScale{
 					HPA: &HorizontalPodAutoscalerSpec{},
 				},
 			},
@@ -260,7 +260,7 @@ func TestIsDefaultedKanaryDeploymentSpecScale(t *testing.T) {
 		{
 			name: "HPA not defaulted (Metrics)",
 			args: args{
-				scale: &KanaryDeploymentSpecScale{
+				scale: &KanaryStatefulsetSpecScale{
 					HPA: &HorizontalPodAutoscalerSpec{
 						MinReplicas: NewInt32(1),
 						MaxReplicas: int32(5),
@@ -272,7 +272,7 @@ func TestIsDefaultedKanaryDeploymentSpecScale(t *testing.T) {
 		{
 			name: "HPA not defaulted (Metrics empty slice)",
 			args: args{
-				scale: &KanaryDeploymentSpecScale{
+				scale: &KanaryStatefulsetSpecScale{
 					HPA: &HorizontalPodAutoscalerSpec{
 						MinReplicas: NewInt32(1),
 						MaxReplicas: int32(5),
@@ -285,7 +285,7 @@ func TestIsDefaultedKanaryDeploymentSpecScale(t *testing.T) {
 		{
 			name: "HPA defaulted ",
 			args: args{
-				scale: &KanaryDeploymentSpecScale{
+				scale: &KanaryStatefulsetSpecScale{
 					HPA: &HorizontalPodAutoscalerSpec{
 						MinReplicas: NewInt32(1),
 						MaxReplicas: int32(5),
@@ -298,23 +298,23 @@ func TestIsDefaultedKanaryDeploymentSpecScale(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := IsDefaultedKanaryDeploymentSpecScale(tt.args.scale); got != tt.want {
-				t.Errorf("IsDefaultedKanaryDeploymentSpecScale() = %v, want %v", got, tt.want)
+			if got := IsDefaultedKanaryStatefulsetSpecScale(tt.args.scale); got != tt.want {
+				t.Errorf("IsDefaultedKanaryStatefulsetSpecScale() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_defaultKanaryDeploymentSpecValidationList(t *testing.T) {
+func Test_defaultKanaryStatefulsetSpecValidationList(t *testing.T) {
 	tests := []struct {
 		name string
-		list *KanaryDeploymentSpecValidationList
-		want *KanaryDeploymentSpecValidationList
+		list *KanaryStatefulsetSpecValidationList
+		want *KanaryStatefulsetSpecValidationList
 	}{
 		{
 			name: "nil list",
-			list: &KanaryDeploymentSpecValidationList{},
-			want: &KanaryDeploymentSpecValidationList{
+			list: &KanaryStatefulsetSpecValidationList{},
+			want: &KanaryStatefulsetSpecValidationList{
 				ValidationPeriod: &metav1.Duration{
 					Duration: 15 * time.Minute,
 				},
@@ -324,10 +324,10 @@ func Test_defaultKanaryDeploymentSpecValidationList(t *testing.T) {
 				MaxIntervalPeriod: &metav1.Duration{
 					Duration: 20 * time.Second,
 				},
-				Items: []KanaryDeploymentSpecValidation{
+				Items: []KanaryStatefulsetSpecValidation{
 					{
-						Manual: &KanaryDeploymentSpecValidationManual{
-							StatusAfterDealine: NoneKanaryDeploymentSpecValidationManualDeadineStatus,
+						Manual: &KanaryStatefulsetSpecValidationManual{
+							StatusAfterDealine: NoneKanaryStatefulsetSpecValidationManualDeadineStatus,
 						},
 					},
 				},
@@ -335,10 +335,10 @@ func Test_defaultKanaryDeploymentSpecValidationList(t *testing.T) {
 		},
 		{
 			name: "one element not defaulted",
-			list: &KanaryDeploymentSpecValidationList{
-				Items: []KanaryDeploymentSpecValidation{{}},
+			list: &KanaryStatefulsetSpecValidationList{
+				Items: []KanaryStatefulsetSpecValidation{{}},
 			},
-			want: &KanaryDeploymentSpecValidationList{
+			want: &KanaryStatefulsetSpecValidationList{
 				ValidationPeriod: &metav1.Duration{
 					Duration: 15 * time.Minute,
 				},
@@ -348,10 +348,10 @@ func Test_defaultKanaryDeploymentSpecValidationList(t *testing.T) {
 				MaxIntervalPeriod: &metav1.Duration{
 					Duration: 20 * time.Second,
 				},
-				Items: []KanaryDeploymentSpecValidation{
+				Items: []KanaryStatefulsetSpecValidation{
 					{
-						Manual: &KanaryDeploymentSpecValidationManual{
-							StatusAfterDealine: NoneKanaryDeploymentSpecValidationManualDeadineStatus,
+						Manual: &KanaryStatefulsetSpecValidationManual{
+							StatusAfterDealine: NoneKanaryStatefulsetSpecValidationManualDeadineStatus,
 						},
 					},
 				},
@@ -360,9 +360,9 @@ func Test_defaultKanaryDeploymentSpecValidationList(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			defaultKanaryDeploymentSpecValidationList(tt.list)
+			defaultKanaryStatefulsetSpecValidationList(tt.list)
 			if !reflect.DeepEqual(tt.list, tt.want) {
-				t.Errorf("defaultKanaryDeploymentSpecValidationList() = %#v, want %#v", tt.list, tt.want)
+				t.Errorf("defaultKanaryStatefulsetSpecValidationList() = %#v, want %#v", tt.list, tt.want)
 			}
 		})
 	}

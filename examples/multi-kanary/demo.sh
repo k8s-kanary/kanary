@@ -28,7 +28,7 @@ desc "Create a dedicated namespace"
 run "kubectl create ns multikanary; kubens multikanary"
 
 desc "Install kanary crd"
-run "kubectl apply -f deploy/crds/kanary_v1alpha1_kanarydeployment_crd.yaml"
+run "kubectl apply -f deploy/crds/kanary_v1alpha1_kanarystatefulset_crd.yaml"
 desc "Install kanary operator"
 run "for file in {service_account,role,role_binding,operator}; do kubectl apply -f deploy/\${file}.yaml; done"
 wait_for_deployment "kanary"

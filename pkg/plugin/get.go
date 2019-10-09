@@ -37,7 +37,7 @@ type GetOptions struct {
 	genericclioptions.IOStreams
 
 	userNamespace            string
-	userKanaryDeploymentName string
+	userKanaryStatefulsetName string
 }
 
 // NewGetOptions provides an instance of GetOptions with default values
@@ -102,7 +102,7 @@ func (o *GetOptions) Complete(cmd *cobra.Command, args []string) error {
 	}
 
 	if len(args) > 0 {
-		o.userKanaryDeploymentName = args[0]
+		o.userKanaryStatefulsetName = args[0]
 	}
 
 	return nil
@@ -120,20 +120,20 @@ func (o *GetOptions) Validate() error {
 
 // Run use to run the command
 func (o *GetOptions) Run() error {
-	kanaryList := &v1alpha1.KanaryDeploymentList{}
+	kanaryList := &v1alpha1.KanaryStatefulsetList{}
 
-	if o.userKanaryDeploymentName == "" {
+	if o.userKanaryStatefulsetName == "" {
 		err := o.client.List(context.TODO(), &client.ListOptions{Namespace: o.userNamespace}, kanaryList)
 		if err != nil {
-			return fmt.Errorf("unable to list KanaryDeployment, err: %v", err)
+			return fmt.Errorf("unable to list KanaryStatefulset, err: %v", err)
 		}
 	} else {
-		kanary := &v1alpha1.KanaryDeployment{}
-		err := o.client.Get(context.TODO(), client.ObjectKey{Namespace: o.userNamespace, Name: o.userKanaryDeploymentName}, kanary)
+		kanary := &v1alpha1.KanaryStatefulset{}
+		err := o.client.Get(context.TODO(), client.ObjectKey{Namespace: o.userNamespace, Name: o.userKanaryStatefulsetName}, kanary)
 		if err != nil && errors.IsNotFound(err) {
-			return fmt.Errorf("KanartDeployment %s/%s not found", o.userNamespace, o.userKanaryDeploymentName)
+			return fmt.Errorf("KanartDeployment %s/%s not found", o.userNamespace, o.userKanaryStatefulsetName)
 		} else if err != nil {
-			return fmt.Errorf("unable to get KanaryDeployment, err: %v", err)
+			return fmt.Errorf("unable to get KanaryStatefulset, err: %v", err)
 		}
 		kanaryList.Items = append(kanaryList.Items, *kanary)
 	}
@@ -149,22 +149,22 @@ func (o *GetOptions) Run() error {
 	return nil
 }
 
-func getScale(kd *v1alpha1.KanaryDeployment) string {
+func getScale(kd *v1alpha1.KanaryStatefulset) string {
 	return kd.Status.Report.Scale
 }
 
-func getTraffic(kd *v1alpha1.KanaryDeployment) string {
+func getTraffic(kd *v1alpha1.KanaryStatefulset) string {
 	return kd.Status.Report.Traffic
 }
 
-func getValidation(kd *v1alpha1.KanaryDeployment) string {
+func getValidation(kd *v1alpha1.KanaryStatefulset) string {
 	return kd.Status.Report.Validation
 }
-func getStatus(kd *v1alpha1.KanaryDeployment) string {
+func getStatus(kd *v1alpha1.KanaryStatefulset) string {
 	return kd.Status.Report.Status
 }
 
-func getDuration(kd *v1alpha1.KanaryDeployment) string {
+func getDuration(kd *v1alpha1.KanaryStatefulset) string {
 	duration := time.Duration(0)
 	if kd.Spec.Validations.InitialDelay != nil {
 		duration += kd.Spec.Validations.InitialDelay.Duration

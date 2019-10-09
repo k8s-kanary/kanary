@@ -9,63 +9,63 @@ import (
 )
 
 func init() {
-	SchemeBuilder.Register(&KanaryDeployment{}, &KanaryDeploymentList{})
+	SchemeBuilder.Register(&KanaryStatefulset{}, &KanaryStatefulsetList{})
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-// KanaryDeployment is the Schema for the kanarydeployments API
+// KanaryStatefulset is the Schema for the kanarystatefulsets API
 // +k8s:openapi-gen=true
-type KanaryDeployment struct {
+type KanaryStatefulset struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   KanaryDeploymentSpec   `json:"spec,omitempty"`
-	Status KanaryDeploymentStatus `json:"status,omitempty"`
+	Spec   KanaryStatefulsetSpec   `json:"spec,omitempty"`
+	Status KanaryStatefulsetStatus `json:"status,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-// KanaryDeploymentList contains a list of KanaryDeployment
-type KanaryDeploymentList struct {
+// KanaryStatefulsetList contains a list of KanaryStatefulset
+type KanaryStatefulsetList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []KanaryDeployment `json:"items"`
+	Items           []KanaryStatefulset `json:"items"`
 }
 
-// KanaryDeploymentSpec defines the desired state of KanaryDeployment
-type KanaryDeploymentSpec struct {
+// KanaryStatefulsetSpec defines the desired state of KanaryStatefulset
+type KanaryStatefulsetSpec struct {
 	// DeploymentName is the name of the deployment that will be updated in case of a success
 	// canary deployment testing
-	// if DeploymentName is empty or not define. The KanaryDeployment will search for a Deployment with
-	// same name than the KanaryDeployment. If the deployment not exist, the deployment will be created
-	// with the deployment template present in the KanaryDeployment.
+	// if DeploymentName is empty or not define. The KanaryStatefulset will search for a Deployment with
+	// same name than the KanaryStatefulset. If the deployment not exist, the deployment will be created
+	// with the deployment template present in the KanaryStatefulset.
 	DeploymentName string `json:"deploymentName,omitempty"`
 	StatefulSetName string `json:"statefulSetName,omitempty"`
 	// serviceName is the name of the service that governs the associated Deployment.
 	// This service can be empty of not defined, which means that some Kanary feature will not be
-	// applied on the KanaryDeployment.
+	// applied on the KanaryStatefulset.
 	ServiceName string `json:"serviceName,omitempty"`
 	// Template  is the object that describes the deployment that will be created.
 	Template DeploymentTemplate `json:"template,omitempty"`
 	// Scale is the scaling configuration for the canary deployment
-	Scale KanaryDeploymentSpecScale `json:"scale,omitempty"`
+	Scale KanaryStatefulsetSpecScale `json:"scale,omitempty"`
 	// Traffic is the scaling configuration for the canary deployment
-	Traffic KanaryDeploymentSpecTraffic `json:"traffic,omitempty"`
+	Traffic KanaryStatefulsetSpecTraffic `json:"traffic,omitempty"`
 	// Validations is the scaling configuration for the canary deployment
-	Validations KanaryDeploymentSpecValidationList `json:"validations,omitempty"`
+	Validations KanaryStatefulsetSpecValidationList `json:"validations,omitempty"`
 	// Schedule helps you to define when that canary deployment should start. RFC3339 = "2006-01-02T15:04:05Z07:00" "2006-01-02T15:04:05Z"
 	Schedule string `json:"schedule,omiempty"`
 }
 
-// KanaryDeploymentSpecScale defines the scale configuration for the canary deployment
-type KanaryDeploymentSpecScale struct {
-	Static *KanaryDeploymentSpecScaleStatic `json:"static,omitempty"`
+// KanaryStatefulsetSpecScale defines the scale configuration for the canary deployment
+type KanaryStatefulsetSpecScale struct {
+	Static *KanaryStatefulsetSpecScaleStatic `json:"static,omitempty"`
 	HPA    *HorizontalPodAutoscalerSpec     `json:"hpa,omitempty"`
 }
 
-// KanaryDeploymentSpecScaleStatic defines the static scale configuration for the canary deployment
-type KanaryDeploymentSpecScaleStatic struct {
+// KanaryStatefulsetSpecScaleStatic defines the static scale configuration for the canary deployment
+type KanaryStatefulsetSpecScaleStatic struct {
 	// Number of desired pods. This is a pointer to distinguish between explicit
 	// zero and not specified. Defaults to 1.
 	// +optional
@@ -92,45 +92,45 @@ type HorizontalPodAutoscalerSpec struct {
 	Metrics []v2beta1.MetricSpec `json:"metrics,omitempty" protobuf:"bytes,4,rep,name=metrics"`
 }
 
-// KanaryDeploymentSpecTraffic defines the traffic configuration for the canary deployment
-type KanaryDeploymentSpecTraffic struct {
+// KanaryStatefulsetSpecTraffic defines the traffic configuration for the canary deployment
+type KanaryStatefulsetSpecTraffic struct {
 	// Source defines the traffic source that targets the canary deployment pods
-	Source KanaryDeploymentSpecTrafficSource `json:"source,omitempty"`
+	Source KanaryStatefulsetSpecTrafficSource `json:"source,omitempty"`
 	// KanaryService is the name of the service that will be created to target specifically
 	// pods that serve the canary service version.
 	// if kanaryService is empty or not define, a service name will be generated from the
-	// serviceName provided in the KanaryDeploymentSpec.
+	// serviceName provided in the KanaryStatefulsetSpec.
 	KanaryService string `json:"kanaryService,omitempty"`
 	// Mirror
-	Mirror *KanaryDeploymentSpecTrafficMirror `json:"mirror,omitempty"`
+	Mirror *KanaryStatefulsetSpecTrafficMirror `json:"mirror,omitempty"`
 }
 
-// KanaryDeploymentSpecTrafficSource defines the traffic source that targets the canary deployment pods
-type KanaryDeploymentSpecTrafficSource string
+// KanaryStatefulsetSpecTrafficSource defines the traffic source that targets the canary deployment pods
+type KanaryStatefulsetSpecTrafficSource string
 
 const (
-	// ServiceKanaryDeploymentSpecTrafficSource means that deployment service also target the canary deployment. Normal service discovery and loadbalacing done by kubernetes will be applied.
-	ServiceKanaryDeploymentSpecTrafficSource KanaryDeploymentSpecTrafficSource = "service"
-	// KanaryServiceKanaryDeploymentSpecTrafficSource means that a dedicated service is created to target the canary deployment pods. The canary pods do not receive traffic from the classic service.
-	KanaryServiceKanaryDeploymentSpecTrafficSource KanaryDeploymentSpecTrafficSource = "kanary-service"
-	// BothKanaryDeploymentSpecTrafficSource means canary deployment pods are targetable thank the deployment service but also
+	// ServiceKanaryStatefulsetSpecTrafficSource means that deployment service also target the canary deployment. Normal service discovery and loadbalacing done by kubernetes will be applied.
+	ServiceKanaryStatefulsetSpecTrafficSource KanaryStatefulsetSpecTrafficSource = "service"
+	// KanaryServiceKanaryStatefulsetSpecTrafficSource means that a dedicated service is created to target the canary deployment pods. The canary pods do not receive traffic from the classic service.
+	KanaryServiceKanaryStatefulsetSpecTrafficSource KanaryStatefulsetSpecTrafficSource = "kanary-service"
+	// BothKanaryStatefulsetSpecTrafficSource means canary deployment pods are targetable thank the deployment service but also
 	// with a the create kanary service.
-	BothKanaryDeploymentSpecTrafficSource KanaryDeploymentSpecTrafficSource = "both"
-	// NoneKanaryDeploymentSpecTrafficSource means the canary deployment pods are not accessible. it can be use when the application
+	BothKanaryStatefulsetSpecTrafficSource KanaryStatefulsetSpecTrafficSource = "both"
+	// NoneKanaryStatefulsetSpecTrafficSource means the canary deployment pods are not accessible. it can be use when the application
 	// don't define any service.
-	NoneKanaryDeploymentSpecTrafficSource KanaryDeploymentSpecTrafficSource = "none"
-	// MirrorKanaryDeploymentSpecTrafficSource means that the canary deployment pods are target by a mirror traffic. This can be done only if istio is installed.
-	MirrorKanaryDeploymentSpecTrafficSource KanaryDeploymentSpecTrafficSource = "mirror"
+	NoneKanaryStatefulsetSpecTrafficSource KanaryStatefulsetSpecTrafficSource = "none"
+	// MirrorKanaryStatefulsetSpecTrafficSource means that the canary deployment pods are target by a mirror traffic. This can be done only if istio is installed.
+	MirrorKanaryStatefulsetSpecTrafficSource KanaryStatefulsetSpecTrafficSource = "mirror"
 )
 
-// KanaryDeploymentSpecTrafficMirror define the activation of mirror traffic on canary pods
-type KanaryDeploymentSpecTrafficMirror struct {
+// KanaryStatefulsetSpecTrafficMirror define the activation of mirror traffic on canary pods
+type KanaryStatefulsetSpecTrafficMirror struct {
 	Activate bool `json:"activate"`
 }
 
-// KanaryDeploymentSpecValidationList define list of KanaryDeploymentSpecValidation
-type KanaryDeploymentSpecValidationList struct {
-	// InitialDelay duration after the KanaryDeployment has started before validation checks is started.
+// KanaryStatefulsetSpecValidationList define list of KanaryStatefulsetSpecValidation
+type KanaryStatefulsetSpecValidationList struct {
+	// InitialDelay duration after the KanaryStatefulset has started before validation checks is started.
 	InitialDelay *metav1.Duration `json:"initialDelay,omitempty"`
 	// ValidationPeriod validation checks duration.
 	ValidationPeriod *metav1.Duration `json:"validationPeriod,omitempty"`
@@ -138,49 +138,49 @@ type KanaryDeploymentSpecValidationList struct {
 	MaxIntervalPeriod *metav1.Duration `json:"maxIntervalPeriod,omitempty"`
 	// NoUpdate if set to true, the Deployment will no be updated after a succeed validation period.
 	NoUpdate bool `json:"noUpdate,omitempty"`
-	// Items list of KanaryDeploymentSpecValidation
-	Items []KanaryDeploymentSpecValidation `json:"items,omitempty"`
+	// Items list of KanaryStatefulsetSpecValidation
+	Items []KanaryStatefulsetSpecValidation `json:"items,omitempty"`
 }
 
-// KanaryDeploymentSpecValidation defines the validation configuration for the canary deployment
-type KanaryDeploymentSpecValidation struct {
-	Manual     *KanaryDeploymentSpecValidationManual     `json:"manual,omitempty"`
-	LabelWatch *KanaryDeploymentSpecValidationLabelWatch `json:"labelWatch,omitempty"`
-	PromQL     *KanaryDeploymentSpecValidationPromQL     `json:"promQL,omitempty"`
+// KanaryStatefulsetSpecValidation defines the validation configuration for the canary deployment
+type KanaryStatefulsetSpecValidation struct {
+	Manual     *KanaryStatefulsetSpecValidationManual     `json:"manual,omitempty"`
+	LabelWatch *KanaryStatefulsetSpecValidationLabelWatch `json:"labelWatch,omitempty"`
+	PromQL     *KanaryStatefulsetSpecValidationPromQL     `json:"promQL,omitempty"`
 }
 
-// KanaryDeploymentSpecValidationManual defines the manual validation configuration
-type KanaryDeploymentSpecValidationManual struct {
-	StatusAfterDealine KanaryDeploymentSpecValidationManualDeadineStatus `json:"statusAfterDeadline,omitempty"`
-	Status             KanaryDeploymentSpecValidationManualStatus        `json:"status,omitempty"`
+// KanaryStatefulsetSpecValidationManual defines the manual validation configuration
+type KanaryStatefulsetSpecValidationManual struct {
+	StatusAfterDealine KanaryStatefulsetSpecValidationManualDeadineStatus `json:"statusAfterDeadline,omitempty"`
+	Status             KanaryStatefulsetSpecValidationManualStatus        `json:"status,omitempty"`
 }
 
-// KanaryDeploymentSpecValidationManualDeadineStatus defines the validation manual deadine mode
-type KanaryDeploymentSpecValidationManualDeadineStatus string
+// KanaryStatefulsetSpecValidationManualDeadineStatus defines the validation manual deadine mode
+type KanaryStatefulsetSpecValidationManualDeadineStatus string
 
 const (
-	// NoneKanaryDeploymentSpecValidationManualDeadineStatus means deadline is not activated.
-	NoneKanaryDeploymentSpecValidationManualDeadineStatus KanaryDeploymentSpecValidationManualDeadineStatus = "none"
-	// ValidKanaryDeploymentSpecValidationManualDeadineStatus means that after the validation.ValidationPeriod
-	// if the validation.manual.status is not set properly the KanaryDeployment will be considered as "valid"
-	ValidKanaryDeploymentSpecValidationManualDeadineStatus KanaryDeploymentSpecValidationManualDeadineStatus = "valid"
-	// InvalidKanaryDeploymentSpecValidationManualDeadineStatus means that after the validation.ValidationPeriod
-	// if the validation.manual.status is not set properly the KanaryDeployment will be considered as "invalid"
-	InvalidKanaryDeploymentSpecValidationManualDeadineStatus KanaryDeploymentSpecValidationManualDeadineStatus = "invalid"
+	// NoneKanaryStatefulsetSpecValidationManualDeadineStatus means deadline is not activated.
+	NoneKanaryStatefulsetSpecValidationManualDeadineStatus KanaryStatefulsetSpecValidationManualDeadineStatus = "none"
+	// ValidKanaryStatefulsetSpecValidationManualDeadineStatus means that after the validation.ValidationPeriod
+	// if the validation.manual.status is not set properly the KanaryStatefulset will be considered as "valid"
+	ValidKanaryStatefulsetSpecValidationManualDeadineStatus KanaryStatefulsetSpecValidationManualDeadineStatus = "valid"
+	// InvalidKanaryStatefulsetSpecValidationManualDeadineStatus means that after the validation.ValidationPeriod
+	// if the validation.manual.status is not set properly the KanaryStatefulset will be considered as "invalid"
+	InvalidKanaryStatefulsetSpecValidationManualDeadineStatus KanaryStatefulsetSpecValidationManualDeadineStatus = "invalid"
 )
 
-// KanaryDeploymentSpecValidationManualStatus defines the KanaryDeployment validation status in case of manual validation.
-type KanaryDeploymentSpecValidationManualStatus string
+// KanaryStatefulsetSpecValidationManualStatus defines the KanaryStatefulset validation status in case of manual validation.
+type KanaryStatefulsetSpecValidationManualStatus string
 
 const (
-	// ValidKanaryDeploymentSpecValidationManualStatus means that the KanaryDeployment have been validated successfully.
-	ValidKanaryDeploymentSpecValidationManualStatus KanaryDeploymentSpecValidationManualStatus = "valid"
-	// InvalidKanaryDeploymentSpecValidationManualStatus means that the KanaryDeployment have been invalidated.
-	InvalidKanaryDeploymentSpecValidationManualStatus KanaryDeploymentSpecValidationManualStatus = "invalid"
+	// ValidKanaryStatefulsetSpecValidationManualStatus means that the KanaryStatefulset have been validated successfully.
+	ValidKanaryStatefulsetSpecValidationManualStatus KanaryStatefulsetSpecValidationManualStatus = "valid"
+	// InvalidKanaryStatefulsetSpecValidationManualStatus means that the KanaryStatefulset have been invalidated.
+	InvalidKanaryStatefulsetSpecValidationManualStatus KanaryStatefulsetSpecValidationManualStatus = "invalid"
 )
 
-// KanaryDeploymentSpecValidationLabelWatch defines the labelWatch validation configuration
-type KanaryDeploymentSpecValidationLabelWatch struct {
+// KanaryStatefulsetSpecValidationLabelWatch defines the labelWatch validation configuration
+type KanaryStatefulsetSpecValidationLabelWatch struct {
 	// PodInvalidationLabels defines labels that should be present on the canary pods in order to invalidate
 	// the canary deployment
 	PodInvalidationLabels *metav1.LabelSelector `json:"podInvalidationLabels,omitempty"`
@@ -189,8 +189,8 @@ type KanaryDeploymentSpecValidationLabelWatch struct {
 	DeploymentInvalidationLabels *metav1.LabelSelector `json:"deploymentInvalidationLabels,omitempty"`
 }
 
-// KanaryDeploymentSpecValidationPromQL defines the promQL validation configuration
-type KanaryDeploymentSpecValidationPromQL struct {
+// KanaryStatefulsetSpecValidationPromQL defines the promQL validation configuration
+type KanaryStatefulsetSpecValidationPromQL struct {
 	PrometheusService string `json:"prometheusService"`
 	Query             string `json:"query"` //The promQL query
 	// note the AND close that prevent to return record when there is less that 70 records over the floating time window of 1m
@@ -227,17 +227,17 @@ type DiscreteValueOutOfList struct {
 	TolerancePercent *uint    `json:"tolerance"`            // % of Bad values tolerated until the pod is considered out of SLA
 }
 
-// KanaryDeploymentStatus defines the observed state of KanaryDeployment
-type KanaryDeploymentStatus struct {
+// KanaryStatefulsetStatus defines the observed state of KanaryStatefulset
+type KanaryStatefulsetStatus struct {
 	// CurrentHash represents the current MD5 spec deployment template hash
 	CurrentHash string `json:"currentHash,omitempty"`
-	// Represents the latest available observations of a kanarydeployment's current state.
-	Conditions []KanaryDeploymentCondition `json:"conditions,omitempty"`
+	// Represents the latest available observations of a kanarystatefulset's current state.
+	Conditions []KanaryStatefulsetCondition `json:"conditions,omitempty"`
 	// Report
-	Report KanaryDeploymentStatusReport `json:"report,omitempty"`
+	Report KanaryStatefulsetStatusReport `json:"report,omitempty"`
 }
 
-type KanaryDeploymentStatusReport struct {
+type KanaryStatefulsetStatusReport struct {
 	Status     string `json:"status,omitempty"`
 	Validation string `json:"validation,omitempty"`
 	Scale      string `json:"scale,omitempty"`
@@ -257,10 +257,10 @@ type DeploymentTemplate struct {
 	Spec v1beta1.DeploymentSpec `json:"spec,omitempty" protobuf:"bytes,2,opt,name=spec"`
 }
 
-// KanaryDeploymentCondition describes the state of a deployment at a certain point.
-type KanaryDeploymentCondition struct {
+// KanaryStatefulsetCondition describes the state of a deployment at a certain point.
+type KanaryStatefulsetCondition struct {
 	// Type of deployment condition.
-	Type KanaryDeploymentConditionType `json:"type"`
+	Type KanaryStatefulsetConditionType `json:"type"`
 	// Status of the condition, one of True, False, Unknown.
 	Status v1.ConditionStatus `json:"status"`
 	// The last time this condition was updated.
@@ -273,53 +273,53 @@ type KanaryDeploymentCondition struct {
 	Message string `json:"message,omitempty"`
 }
 
-// KanaryDeploymentConditionType describes the state of a deployment at a certain point.
-type KanaryDeploymentConditionType string
+// KanaryStatefulsetConditionType describes the state of a deployment at a certain point.
+type KanaryStatefulsetConditionType string
 
-// These are valid conditions of a kanarydeployment.
+// These are valid conditions of a kanarystatefulset.
 const (
-	// Activated means the KanaryDeployment strategy is activated
-	ScheduledKanaryDeploymentConditionType KanaryDeploymentConditionType = "Scheduled"
-	// Activated means the KanaryDeployment strategy is activated
-	ActivatedKanaryDeploymentConditionType KanaryDeploymentConditionType = "Activated"
-	// Succeeded means the KanaryDeployment strategy succeed,
+	// Activated means the KanaryStatefulset strategy is activated
+	ScheduledKanaryStatefulsetConditionType KanaryStatefulsetConditionType = "Scheduled"
+	// Activated means the KanaryStatefulset strategy is activated
+	ActivatedKanaryStatefulsetConditionType KanaryStatefulsetConditionType = "Activated"
+	// Succeeded means the KanaryStatefulset strategy succeed,
 	// the deployment rolling-update is in progress or already done.
 	// it means also the deployment and the canary deployment have the same version.
-	SucceededKanaryDeploymentConditionType KanaryDeploymentConditionType = "Succeeded"
-	// FailedKanaryDeploymentConditionType is added in a kanarydeployment when the canary deployment
+	SucceededKanaryStatefulsetConditionType KanaryStatefulsetConditionType = "Succeeded"
+	// FailedKanaryStatefulsetConditionType is added in a kanarystatefulset when the canary deployment
 	// process failed.
-	FailedKanaryDeploymentConditionType KanaryDeploymentConditionType = "Failed"
-	// RunningKanaryDeploymentConditionType is added in a kanarydeployment when the canary is still under validation.
-	RunningKanaryDeploymentConditionType KanaryDeploymentConditionType = "Running"
-	// DeploymentUpdated is added in a kanarydeployment when the canary succeded and that the deployment was updated
-	DeploymentUpdatedKanaryDeploymentConditionType KanaryDeploymentConditionType = "DeploymentUpdated"
+	FailedKanaryStatefulsetConditionType KanaryStatefulsetConditionType = "Failed"
+	// RunningKanaryStatefulsetConditionType is added in a kanarystatefulset when the canary is still under validation.
+	RunningKanaryStatefulsetConditionType KanaryStatefulsetConditionType = "Running"
+	// DeploymentUpdated is added in a kanarystatefulset when the canary succeded and that the deployment was updated
+	DeploymentUpdatedKanaryStatefulsetConditionType KanaryStatefulsetConditionType = "DeploymentUpdated"
 
-	// ErroredKanaryDeploymentConditionType is added in a kanarydeployment when the canary deployment
+	// ErroredKanaryStatefulsetConditionType is added in a kanarystatefulset when the canary deployment
 	// process errored.
-	ErroredKanaryDeploymentConditionType KanaryDeploymentConditionType = "Errored"
-	// TrafficServiceKanaryDeploymentConditionType means the KanaryDeployment Traffic strategy is activated
-	TrafficKanaryDeploymentConditionType KanaryDeploymentConditionType = "Traffic"
+	ErroredKanaryStatefulsetConditionType KanaryStatefulsetConditionType = "Errored"
+	// TrafficServiceKanaryStatefulsetConditionType means the KanaryStatefulset Traffic strategy is activated
+	TrafficKanaryStatefulsetConditionType KanaryStatefulsetConditionType = "Traffic"
 )
 
-// KanaryDeploymentAnnotationKeyType corresponds to all possible Annotation Keys that can be added/updated by Kanary
-type KanaryDeploymentAnnotationKeyType string
+// KanaryStatefulsetAnnotationKeyType corresponds to all possible Annotation Keys that can be added/updated by Kanary
+type KanaryStatefulsetAnnotationKeyType string
 
 const (
-	// MD5KanaryDeploymentAnnotationKey correspond to the annotation key for the deployment template md5 used to create the deployment.
-	MD5KanaryDeploymentAnnotationKey KanaryDeploymentAnnotationKeyType = "kanary.k8s-operators.dev/md5"
+	// MD5KanaryStatefulsetAnnotationKey correspond to the annotation key for the deployment template md5 used to create the deployment.
+	MD5KanaryStatefulsetAnnotationKey KanaryStatefulsetAnnotationKeyType = "kanary.k8s-operators.dev/md5"
 )
 
 const (
-	// KanaryDeploymentIsKanaryLabelKey correspond to the label key used on a deployment to inform
+	// KanaryStatefulsetIsKanaryLabelKey correspond to the label key used on a deployment to inform
 	// that this instance is used in a canary deployment.
-	KanaryDeploymentIsKanaryLabelKey = "kanary.k8s-operators.dev/iskanary"
-	// KanaryDeploymentKanaryNameLabelKey correspond to the label key used on a deployment and pod to provide the KanaryDeployment name.
-	KanaryDeploymentKanaryNameLabelKey = "kanary.k8s-operators.dev/name"
-	// KanaryDeploymentActivateLabelKey correspond to the label key used on a pod to inform that this
+	KanaryStatefulsetIsKanaryLabelKey = "kanary.k8s-operators.dev/iskanary"
+	// KanaryStatefulsetKanaryNameLabelKey correspond to the label key used on a deployment and pod to provide the KanaryStatefulset name.
+	KanaryStatefulsetKanaryNameLabelKey = "kanary.k8s-operators.dev/name"
+	// KanaryStatefulsetActivateLabelKey correspond to the label key used on a pod to inform that this
 	// Pod instance in a canary version of the application.
-	KanaryDeploymentActivateLabelKey = "kanary.k8s-operators.dev/canary-pod"
-	// KanaryDeploymentLabelValueTrue correspond to the label value True used with several Kanary label keys.
-	KanaryDeploymentLabelValueTrue = "true"
-	// KanaryDeploymentLabelValueFalse correspond to the label value False used with several Kanary label keys.
-	KanaryDeploymentLabelValueFalse = "false"
+	KanaryStatefulsetActivateLabelKey = "kanary.k8s-operators.dev/canary-pod"
+	// KanaryStatefulsetLabelValueTrue correspond to the label value True used with several Kanary label keys.
+	KanaryStatefulsetLabelValueTrue = "true"
+	// KanaryStatefulsetLabelValueFalse correspond to the label value False used with several Kanary label keys.
+	KanaryStatefulsetLabelValueFalse = "false"
 )
