@@ -79,7 +79,7 @@ desc "Create a dedicated namespace"
 DEMO_AUTO_RUN=1 run "kubectl create ns $NAMESPACE; kubectl label namespace $NAMESPACE istio-injection=enabled; kubens $NAMESPACE"
 
 desc "Install kanary crd"
-DEMO_AUTO_RUN=1 run "kubectl apply -f deploy/crds/kanary_v1alpha1_kanarydeployment_crd.yaml"
+DEMO_AUTO_RUN=1 run "kubectl apply -f deploy/crds/kanary_v1alpha1_kanarystatefulset_crd.yaml"
 desc "Install kanary operator"
 DEMO_AUTO_RUN=1 run "for file in {service_account,role,role_binding,operator}; do kubectl apply -f deploy/\${file}.yaml; done"
 wait_for_deployment "kanary"

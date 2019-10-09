@@ -36,7 +36,7 @@ export PATH="$(pwd):$PATH"
 
 ## Deploy Kanary Operator
 ```
-kubectl apply -f deploy/crds/kanary_v1alpha1_kanarydeployment_crd.yaml
+kubectl apply -f deploy/crds/kanary_v1alpha1_kanarystatefulset_crd.yaml
 kubectl apply -f deploy/service_account.yaml
 kubectl apply -f deploy/role.yaml
 kubectl apply -f deploy/role_binding.yaml
@@ -50,9 +50,9 @@ kubectl apply -f examples/example/nginx_deployment.yaml
 ```
 
 ## Demo : Make a canary deployment for nginx
-The aim of this kanarydeployment is to update from version 1.15.4 of the image to latest
+The aim of this kanarystatefulset is to update from version 1.15.4 of the image to latest
 ```
-kubectl apply -f examples/example/nginx_kanarydeployment.yaml
+kubectl apply -f examples/example/nginx_kanarystatefulset.yaml
 ```
 
 ## Demo : current status
@@ -88,7 +88,7 @@ nginx-dep-kanary-5476b5d6b9-sklr7   nginx:latest
 
 Set the status to valid so all the pods get updated using the deployment strategy defined
 ```
-kubectl patch kanarydeployment nginx-dep --type=merge -p '{"spec":{"validation":{"manual":{"statusAfterDeadline":"valid"}}}}'
+kubectl patch kanarystatefulset nginx-dep --type=merge -p '{"spec":{"validation":{"manual":{"statusAfterDeadline":"valid"}}}}'
 ```
 
 Check status
@@ -105,7 +105,7 @@ nginx-dep-kanary-5476b5d6b9-sklr7   nginx:latest
 And the kanary pod does not receive traffic anymore, but stays alive for further analysis
 
 ```
-kubectl delete kanarydeployment nginx-dep
+kubectl delete kanarystatefulset nginx-dep
 ```
 
 will delete kanary deployment and cascade delete the canary pod
@@ -119,17 +119,17 @@ kubectl apply -f examples/example/nginx_deployment.yaml
 
 Start kanary deployment
 ```
-kubectl apply -f examples/example/nginx_kanarydeployment.yaml
+kubectl apply -f examples/example/nginx_kanarystatefulset.yaml
 ```
 
 Invalidate kanary so nothing happens on existing pods, and the kanary does not receive traffic anymore, but stays for further investigation
 ```
-kubectl patch kanarydeployment nginx-dep --type=merge -p '{"spec":{"validation":{"manual":{"statusAfterDeadline":"invalid"}}}}'
+kubectl patch kanarystatefulset nginx-dep --type=merge -p '{"spec":{"validation":{"manual":{"statusAfterDeadline":"invalid"}}}}'
 ```
 
-Delete kanarydeployment will also delete kanary pod
+Delete kanarystatefulset will also delete kanary pod
 ```
-kubectl delete kanarydeployment nginx-dep
+kubectl delete kanarystatefulset nginx-dep
 ```
 
 Check status

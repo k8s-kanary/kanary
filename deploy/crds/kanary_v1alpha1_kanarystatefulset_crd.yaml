@@ -10,17 +10,17 @@ spec:
     plural: kanarystatefulsets
     singular: kanarystatefulset
     shortNames:
-    - kd
+    - ks
     - kanary
   additionalPrinterColumns:
   - name: Status
     type: string
     description: Status for the KanaryStatefulset.
     JSONPath: ".status.report.status"
-  - name: Deployment
+  - name: StatefulSet
     type: string
-    description: Deployment Name used for the KanaryStatefulset.
-    JSONPath: ".spec.deploymentName"
+    description: StatefulSet Name used for the KanaryStatefulset.
+    JSONPath: ".spec.statefulSetName"
   - name: Service
     type: string
     description: Service Name used for the KanaryStatefulset.

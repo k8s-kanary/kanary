@@ -35,7 +35,7 @@ CGO_ENABLED=0 GO111MODULE=on go build GOOS=linux -mod vendor -i -installsuffix c
 
 ```bash
 # install crd
-$ kubectl apply -f deploy/crds/kanary_v1alpha1_kanarydeployment_crd.yaml
+$ kubectl apply -f deploy/crds/kanary_v1alpha1_kanarystatefulset_crd.yaml
 
 # install rbac
 $ kubectl apply -f deploy/service_account.yaml

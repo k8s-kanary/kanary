@@ -24,14 +24,14 @@ import (
 	appsv1beta1 "k8s.io/api/apps/v1beta1"
 
 	"github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
-	"github.com/k8s-kanary/kanary/pkg/controller/kanarydeployment/utils"
+	"github.com/k8s-kanary/kanary/pkg/controller/kanarystatefulset/utils"
 )
 
 var (
 	generateExample = `
-	# generate KanaryDeployment from "foo" Deployment
+	# generate KanaryStatefulset from "foo" Deployment
 	%[1]s generate foo
-	# generate KanaryDeployment from "foo" Deployment and service "bar"
+	# generate KanaryStatefulset from "foo" Deployment and service "bar"
 	%[1]s generate foo --service bar
 `
 )
@@ -126,7 +126,7 @@ func NewCmdGenerate(streams genericclioptions.IOStreams) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:          "generate [deployment-name] [flags]",
-		Short:        "generate a KanaryDeployment artifact from a Deployment",
+		Short:        "generate a KanaryStatefulset artifact from a Deployment",
 		Example:      fmt.Sprintf(generateExample, "kubectl"),
 		SilenceUsage: true,
 		RunE: func(c *cobra.Command, args []string) error {
@@ -209,22 +209,22 @@ func (o *generateOptions) Run() error {
 		return fmt.Errorf("unable to get deployment %s/%s, err: %v", o.userNamespace, o.userDeploymentName, err)
 	}
 
-	newKanaryDeployment := &v1alpha1.KanaryDeployment{
+	newKanaryStatefulset := &v1alpha1.KanaryStatefulset{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       "KanaryDeployment",
+			Kind:       "KanaryStatefulset",
 			APIVersion: v1alpha1.SchemeGroupVersion.String(),
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      o.userName,
 			Namespace: o.userNamespace,
 		},
-		Spec: v1alpha1.KanaryDeploymentSpec{
+		Spec: v1alpha1.KanaryStatefulsetSpec{
 			ServiceName:    o.userServiceName,
 			DeploymentName: o.userDeploymentName,
 			Template: v1alpha1.DeploymentTemplate{
 				Spec: dep.Spec,
 			},
-			Validations: v1alpha1.KanaryDeploymentSpecValidationList{
+			Validations: v1alpha1.KanaryStatefulsetSpecValidationList{
 				ValidationPeriod: &metav1.Duration{Duration: o.userValidationPeriod},
 			},
 		},
@@ -232,36 +232,36 @@ func (o *generateOptions) Run() error {
 
 	switch o.userScale {
 	case "static":
-		newKanaryDeployment.Spec.Scale.Static = &v1alpha1.KanaryDeploymentSpecScaleStatic{
+		newKanaryStatefulset.Spec.Scale.Static = &v1alpha1.KanaryStatefulsetSpecScaleStatic{
 			Replicas: v1alpha1.NewInt32(1),
 		}
 	case "hpa":
-		newKanaryDeployment.Spec.Scale.HPA = &v1alpha1.HorizontalPodAutoscalerSpec{}
+		newKanaryStatefulset.Spec.Scale.HPA = &v1alpha1.HorizontalPodAutoscalerSpec{}
 	default:
 		return fmt.Errorf("wrong value for 'scale' parameter, current value:%s", o.userScale)
 	}
 
-	switch v1alpha1.KanaryDeploymentSpecTrafficSource(o.userTraffic) {
-	case v1alpha1.ServiceKanaryDeploymentSpecTrafficSource:
-		newKanaryDeployment.Spec.Traffic.Source = v1alpha1.ServiceKanaryDeploymentSpecTrafficSource
-	case v1alpha1.KanaryServiceKanaryDeploymentSpecTrafficSource:
-		newKanaryDeployment.Spec.Traffic.Source = v1alpha1.KanaryServiceKanaryDeploymentSpecTrafficSource
-	case v1alpha1.BothKanaryDeploymentSpecTrafficSource:
-		newKanaryDeployment.Spec.Traffic.Source = v1alpha1.BothKanaryDeploymentSpecTrafficSource
-	case v1alpha1.MirrorKanaryDeploymentSpecTrafficSource:
-		newKanaryDeployment.Spec.Traffic.Source = v1alpha1.MirrorKanaryDeploymentSpecTrafficSource
-	case v1alpha1.NoneKanaryDeploymentSpecTrafficSource:
-		newKanaryDeployment.Spec.Traffic.Source = v1alpha1.NoneKanaryDeploymentSpecTrafficSource
+	switch v1alpha1.KanaryStatefulsetSpecTrafficSource(o.userTraffic) {
+	case v1alpha1.ServiceKanaryStatefulsetSpecTrafficSource:
+		newKanaryStatefulset.Spec.Traffic.Source = v1alpha1.ServiceKanaryStatefulsetSpecTrafficSource
+	case v1alpha1.KanaryServiceKanaryStatefulsetSpecTrafficSource:
+		newKanaryStatefulset.Spec.Traffic.Source = v1alpha1.KanaryServiceKanaryStatefulsetSpecTrafficSource
+	case v1alpha1.BothKanaryStatefulsetSpecTrafficSource:
+		newKanaryStatefulset.Spec.Traffic.Source = v1alpha1.BothKanaryStatefulsetSpecTrafficSource
+	case v1alpha1.MirrorKanaryStatefulsetSpecTrafficSource:
+		newKanaryStatefulset.Spec.Traffic.Source = v1alpha1.MirrorKanaryStatefulsetSpecTrafficSource
+	case v1alpha1.NoneKanaryStatefulsetSpecTrafficSource:
+		newKanaryStatefulset.Spec.Traffic.Source = v1alpha1.NoneKanaryStatefulsetSpecTrafficSource
 	default:
 		return fmt.Errorf("wrong value for 'traffic' parameter, current value:%s", o.userTraffic)
 	}
 
 	if o.userValidationLabelWatchDeployment == "" && o.userValidationLabelWatchPod == "" && o.userValidationPromQLIstioQuantile == "" && o.userValidationPromQLIstioSuccess >= 0 {
-		newKanaryDeployment.Spec.Validations.Items = append(newKanaryDeployment.Spec.Validations.Items, v1alpha1.KanaryDeploymentSpecValidation{Manual: &v1alpha1.KanaryDeploymentSpecValidationManual{}})
+		newKanaryStatefulset.Spec.Validations.Items = append(newKanaryStatefulset.Spec.Validations.Items, v1alpha1.KanaryStatefulsetSpecValidation{Manual: &v1alpha1.KanaryStatefulsetSpecValidationManual{}})
 	}
 
 	if o.userValidationLabelWatchPod != "" || o.userValidationLabelWatchDeployment != "" {
-		newLabelWatch := &v1alpha1.KanaryDeploymentSpecValidationLabelWatch{}
+		newLabelWatch := &v1alpha1.KanaryStatefulsetSpecValidationLabelWatch{}
 		if o.userValidationLabelWatchPod != "" {
 			var selector *metav1.LabelSelector
 			selector, err = metav1.ParseToLabelSelector(o.userValidationLabelWatchPod)
@@ -278,7 +278,7 @@ func (o *generateOptions) Run() error {
 			}
 			newLabelWatch.DeploymentInvalidationLabels = selector
 		}
-		newKanaryDeployment.Spec.Validations.Items = append(newKanaryDeployment.Spec.Validations.Items, v1alpha1.KanaryDeploymentSpecValidation{LabelWatch: newLabelWatch})
+		newKanaryStatefulset.Spec.Validations.Items = append(newKanaryStatefulset.Spec.Validations.Items, v1alpha1.KanaryStatefulsetSpecValidation{LabelWatch: newLabelWatch})
 	}
 
 	if o.userValidationPromQLIstioQuantile != "" {
@@ -294,21 +294,21 @@ func (o *generateOptions) Run() error {
 		ms, _ := strconv.Atoi(o.userValidationPromQLIstioQuantile[4:])
 		d := time.Duration(ms) * time.Millisecond
 
-		newKanaryDeployment.Spec.Validations.Items = append(newKanaryDeployment.Spec.Validations.Items, v1alpha1.KanaryDeploymentSpecValidation{PromQL: &v1alpha1.KanaryDeploymentSpecValidationPromQL{
-			Query:             "histogram_quantile(0." + p + ", sum(rate(istio_request_duration_seconds_bucket{reporter=\"destination\",destination_workload=\"" + utils.GetCanaryDeploymentName(newKanaryDeployment) + "\"}[1m])) by (le))",
+		newKanaryStatefulset.Spec.Validations.Items = append(newKanaryStatefulset.Spec.Validations.Items, v1alpha1.KanaryStatefulsetSpecValidation{PromQL: &v1alpha1.KanaryStatefulsetSpecValidationPromQL{
+			Query:             "histogram_quantile(0." + p + ", sum(rate(istio_request_duration_seconds_bucket{reporter=\"destination\",destination_workload=\"" + utils.GetCanaryDeploymentName(newKanaryStatefulset) + "\"}[1m])) by (le))",
 			PrometheusService: "prometheus.istio-system:9090",
 			AllPodsQuery:      true,
 			ValueInRange: &v1alpha1.ValueInRange{
 				Max: v1alpha1.NewFloat64(d.Seconds()),
 			},
 		}})
-		newKanaryDeployment.Spec.Validations.InitialDelay = &metav1.Duration{Duration: 20 * time.Second}
-		newKanaryDeployment.Spec.Validations.MaxIntervalPeriod = &metav1.Duration{Duration: 10 * time.Second}
+		newKanaryStatefulset.Spec.Validations.InitialDelay = &metav1.Duration{Duration: 20 * time.Second}
+		newKanaryStatefulset.Spec.Validations.MaxIntervalPeriod = &metav1.Duration{Duration: 10 * time.Second}
 	}
 
 	if o.userValidationPromQLIstioSuccess >= 0 {
-		newKanaryDeployment.Spec.Validations.Items = append(newKanaryDeployment.Spec.Validations.Items, v1alpha1.KanaryDeploymentSpecValidation{PromQL: &v1alpha1.KanaryDeploymentSpecValidationPromQL{
-			Query:             "sum(rate(istio_requests_total{reporter=\"destination\", destination_workload_namespace=~\"" + o.userNamespace + "\", destination_workload=~\"" + utils.GetCanaryDeploymentName(newKanaryDeployment) + "\",response_code!~\"5.*\"}[1m]))/sum(rate(istio_requests_total{reporter=\"destination\", destination_workload_namespace=~\"" + o.userNamespace + "\", destination_workload=~\"" + utils.GetCanaryDeploymentName(newKanaryDeployment) + "\"}[1m]))",
+		newKanaryStatefulset.Spec.Validations.Items = append(newKanaryStatefulset.Spec.Validations.Items, v1alpha1.KanaryStatefulsetSpecValidation{PromQL: &v1alpha1.KanaryStatefulsetSpecValidationPromQL{
+			Query:             "sum(rate(istio_requests_total{reporter=\"destination\", destination_workload_namespace=~\"" + o.userNamespace + "\", destination_workload=~\"" + utils.GetCanaryDeploymentName(newKanaryStatefulset) + "\",response_code!~\"5.*\"}[1m]))/sum(rate(istio_requests_total{reporter=\"destination\", destination_workload_namespace=~\"" + o.userNamespace + "\", destination_workload=~\"" + utils.GetCanaryDeploymentName(newKanaryStatefulset) + "\"}[1m]))",
 			PrometheusService: "prometheus.istio-system:9090",
 			AllPodsQuery:      true,
 			ValueInRange: &v1alpha1.ValueInRange{
@@ -316,18 +316,18 @@ func (o *generateOptions) Run() error {
 				Max: v1alpha1.NewFloat64(1),
 			},
 		}})
-		newKanaryDeployment.Spec.Validations.InitialDelay = &metav1.Duration{Duration: 20 * time.Second}
-		newKanaryDeployment.Spec.Validations.MaxIntervalPeriod = &metav1.Duration{Duration: 10 * time.Second}
+		newKanaryStatefulset.Spec.Validations.InitialDelay = &metav1.Duration{Duration: 20 * time.Second}
+		newKanaryStatefulset.Spec.Validations.MaxIntervalPeriod = &metav1.Duration{Duration: 10 * time.Second}
 	}
 
 	if o.userDryRun {
-		newKanaryDeployment.Spec.Validations.NoUpdate = true
+		newKanaryStatefulset.Spec.Validations.NoUpdate = true
 	}
 
-	newKanaryDeployment = v1alpha1.DefaultKanaryDeployment(newKanaryDeployment)
+	newKanaryStatefulset = v1alpha1.DefaultKanaryStatefulset(newKanaryStatefulset)
 
 	var bytes []byte
-	bytes, err = json.Marshal(newKanaryDeployment)
+	bytes, err = json.Marshal(newKanaryStatefulset)
 	if err != nil {
 		_, err = fmt.Fprintln(o.Out, fmt.Sprintln("error during json marshalling, err:", err))
 		if err != nil {

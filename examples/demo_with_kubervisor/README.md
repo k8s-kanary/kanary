@@ -46,9 +46,9 @@ export PATH="$(pwd):$PATH"
 
 - Start the Kubervisor Demo app, with injector
 - Start the KubervisorService pricer-kubervisorservice_3.yaml (don't update the service)
-- Generate a KanaryDeployment from the Pricer deployment thanks to the kubectl kanary plugin: (scale=static;traffic=service;validation:labelwath-pod)
+- Generate a KanaryStatefulset from the Pricer deployment thanks to the kubectl kanary plugin: (scale=static;traffic=service;validation:labelwath-pod)
 - Update the Deployment configuration by changing the container parameter: "--km-price"
-- Create the KanaryDeployment.
+- Create the KanaryStatefulset.
 - Wait en see what append.
 
 ## Run
@@ -65,11 +65,11 @@ kubectl create -f $KUBERVISOR_PATH/examples/demo/scripts/pricer-kubervisorservic
 
 # check the dashboard to see that the Kubervisor manage properly the pricer-1a deployment.
 
-# generate now the KanaryDeployment (dry-run to see the spec)
+# generate now the KanaryStatefulset (dry-run to see the spec)
 kubectl kanary generate prod-pricer-1a --service pricer-1a -o yaml --validation-labelwatch-pod "kubervisor/traffic=pause" --validation-period 3m --traffic both
 
 
-# then create the KanaryDeployment resource
+# then create the KanaryStatefulset resource
 kubectl kanary generate prod-pricer-1a --service pricer-1a -o yaml --validation-labelwatch-pod "kubervisor/traffic=pause" --validation-period 3m --traffic both > kanaryDeployment_1.yaml
 
 # edit the Deployment template (change --km-price=1 to --km-price=0)
@@ -84,7 +84,7 @@ watch -n1 kubectl kanary get
 # wait until failure
 kubectl delete -f kanaryDeployment_1.yaml
 
-## New KanaryDeployment
+## New KanaryStatefulset
 kubectl kanary generate prod-pricer-1a -o yaml --validation-labelwatch-pod "kubervisor/traffic=pause" --validation-period 3m > kanaryDeployment_2.yaml
 
 # edit the Deployment template (change --rand-price=30 to --rand-price=25)

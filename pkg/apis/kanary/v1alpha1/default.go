@@ -14,25 +14,25 @@ import (
 // logic, and the pseudo-defaulting done in v1 conversion.
 const DefaultCPUUtilization = 80
 
-// IsDefaultedKanaryDeployment used to know if a KanaryDeployment is already defaulted
+// IsDefaultedKanaryStatefulset used to know if a KanaryStatefulset is already defaulted
 // returns true if yes, else no
-func IsDefaultedKanaryDeployment(kd *KanaryDeployment) bool {
-	if !IsDefaultedKanaryDeploymentSpecScale(&kd.Spec.Scale) {
+func IsDefaultedKanaryStatefulset(kd *KanaryStatefulset) bool {
+	if !IsDefaultedKanaryStatefulsetSpecScale(&kd.Spec.Scale) {
 		return false
 	}
-	if !IsDefaultedKanaryDeploymentSpecTraffic(&kd.Spec.Traffic) {
+	if !IsDefaultedKanaryStatefulsetSpecTraffic(&kd.Spec.Traffic) {
 		return false
 	}
-	if !IsDefaultedKanaryDeploymentSpecValidationList(&kd.Spec.Validations) {
+	if !IsDefaultedKanaryStatefulsetSpecValidationList(&kd.Spec.Validations) {
 		return false
 	}
 
 	return true
 }
 
-// IsDefaultedKanaryDeploymentSpecScale used to know if a KanaryDeploymentSpecScale is already defaulted
+// IsDefaultedKanaryStatefulsetSpecScale used to know if a KanaryStatefulsetSpecScale is already defaulted
 // returns true if yes, else no
-func IsDefaultedKanaryDeploymentSpecScale(scale *KanaryDeploymentSpecScale) bool {
+func IsDefaultedKanaryStatefulsetSpecScale(scale *KanaryStatefulsetSpecScale) bool {
 	if scale.Static == nil && scale.HPA == nil {
 		return false
 	}
@@ -64,22 +64,22 @@ func IsDefaultedKanaryDeploymentSpecScale(scale *KanaryDeploymentSpecScale) bool
 	return true
 }
 
-// IsDefaultedKanaryDeploymentSpecTraffic used to know if a KanaryDeploymentSpecTraffic is already defaulted
+// IsDefaultedKanaryStatefulsetSpecTraffic used to know if a KanaryStatefulsetSpecTraffic is already defaulted
 // returns true if yes, else no
-func IsDefaultedKanaryDeploymentSpecTraffic(t *KanaryDeploymentSpecTraffic) bool {
-	if t.Source == NoneKanaryDeploymentSpecTrafficSource ||
-		t.Source == ServiceKanaryDeploymentSpecTrafficSource ||
-		t.Source == KanaryServiceKanaryDeploymentSpecTrafficSource ||
-		t.Source == BothKanaryDeploymentSpecTrafficSource ||
-		t.Source == MirrorKanaryDeploymentSpecTrafficSource {
+func IsDefaultedKanaryStatefulsetSpecTraffic(t *KanaryStatefulsetSpecTraffic) bool {
+	if t.Source == NoneKanaryStatefulsetSpecTrafficSource ||
+		t.Source == ServiceKanaryStatefulsetSpecTrafficSource ||
+		t.Source == KanaryServiceKanaryStatefulsetSpecTrafficSource ||
+		t.Source == BothKanaryStatefulsetSpecTrafficSource ||
+		t.Source == MirrorKanaryStatefulsetSpecTrafficSource {
 		return true
 	}
 	return false
 }
 
-// IsDefaultedKanaryDeploymentSpecValidation used to know if a KanaryDeploymentSpecValidation is already defaulted
+// IsDefaultedKanaryStatefulsetSpecValidation used to know if a KanaryStatefulsetSpecValidation is already defaulted
 // returns true if yes, else no
-func IsDefaultedKanaryDeploymentSpecValidationList(list *KanaryDeploymentSpecValidationList) bool {
+func IsDefaultedKanaryStatefulsetSpecValidationList(list *KanaryStatefulsetSpecValidationList) bool {
 	if list.ValidationPeriod == nil {
 		return false
 	}
@@ -100,7 +100,7 @@ func IsDefaultedKanaryDeploymentSpecValidationList(list *KanaryDeploymentSpecVal
 	}
 
 	for _, v := range list.Items {
-		if isInit := IsDefaultedKanaryDeploymentSpecValidation(&v); !isInit {
+		if isInit := IsDefaultedKanaryStatefulsetSpecValidation(&v); !isInit {
 			return false
 		}
 	}
@@ -108,23 +108,23 @@ func IsDefaultedKanaryDeploymentSpecValidationList(list *KanaryDeploymentSpecVal
 	return true
 }
 
-// IsDefaultedKanaryDeploymentSpecValidation used to know if a KanaryDeploymentSpecValidation is already defaulted
+// IsDefaultedKanaryStatefulsetSpecValidation used to know if a KanaryStatefulsetSpecValidation is already defaulted
 // returns true if yes, else no
-func IsDefaultedKanaryDeploymentSpecValidation(v *KanaryDeploymentSpecValidation) bool {
+func IsDefaultedKanaryStatefulsetSpecValidation(v *KanaryStatefulsetSpecValidation) bool {
 	if v.Manual == nil && v.LabelWatch == nil && v.PromQL == nil {
 		return false
 	}
 
 	if v.Manual != nil {
-		if !(v.Manual.StatusAfterDealine == NoneKanaryDeploymentSpecValidationManualDeadineStatus ||
-			v.Manual.StatusAfterDealine == ValidKanaryDeploymentSpecValidationManualDeadineStatus ||
-			v.Manual.StatusAfterDealine == InvalidKanaryDeploymentSpecValidationManualDeadineStatus) {
+		if !(v.Manual.StatusAfterDealine == NoneKanaryStatefulsetSpecValidationManualDeadineStatus ||
+			v.Manual.StatusAfterDealine == ValidKanaryStatefulsetSpecValidationManualDeadineStatus ||
+			v.Manual.StatusAfterDealine == InvalidKanaryStatefulsetSpecValidationManualDeadineStatus) {
 			return false
 		}
 	}
 
 	if v.PromQL != nil {
-		if !isDefaultedKanaryDeploymentSpecValidationPromQL(v.PromQL) {
+		if !isDefaultedKanaryStatefulsetSpecValidationPromQL(v.PromQL) {
 			return false
 		}
 	}
@@ -132,67 +132,67 @@ func IsDefaultedKanaryDeploymentSpecValidation(v *KanaryDeploymentSpecValidation
 	return true
 }
 
-func isDefaultedKanaryDeploymentSpecValidationPromQL(pq *KanaryDeploymentSpecValidationPromQL) bool {
+func isDefaultedKanaryStatefulsetSpecValidationPromQL(pq *KanaryStatefulsetSpecValidationPromQL) bool {
 	if pq.PrometheusService == "" {
 		return false
 	}
 	if pq.PodNameKey == "" {
 		return false
 	}
-	if pq.DiscreteValueOutOfList != nil && !isDefaultedKanaryDeploymentSpecValidationPromQLDiscrete(pq.DiscreteValueOutOfList) {
+	if pq.DiscreteValueOutOfList != nil && !isDefaultedKanaryStatefulsetSpecValidationPromQLDiscrete(pq.DiscreteValueOutOfList) {
 		return false
 	}
-	if pq.ContinuousValueDeviation != nil && !isDefaultedKanaryDeploymentSpecValidationPromQLContinuous(pq.ContinuousValueDeviation) {
+	if pq.ContinuousValueDeviation != nil && !isDefaultedKanaryStatefulsetSpecValidationPromQLContinuous(pq.ContinuousValueDeviation) {
 		return false
 	}
-	if pq.ValueInRange != nil && !isDefaultedKanaryDeploymentSpecValidationPromQLValueInRange(pq.ValueInRange) {
+	if pq.ValueInRange != nil && !isDefaultedKanaryStatefulsetSpecValidationPromQLValueInRange(pq.ValueInRange) {
 		return false
 	}
 
 	return true
 }
-func isDefaultedKanaryDeploymentSpecValidationPromQLValueInRange(c *ValueInRange) bool {
+func isDefaultedKanaryStatefulsetSpecValidationPromQLValueInRange(c *ValueInRange) bool {
 	return c.Min != nil && c.Max != nil
 }
 
-func isDefaultedKanaryDeploymentSpecValidationPromQLContinuous(c *ContinuousValueDeviation) bool {
+func isDefaultedKanaryStatefulsetSpecValidationPromQLContinuous(c *ContinuousValueDeviation) bool {
 	return c.MaxDeviationPercent != nil
 }
 
-func isDefaultedKanaryDeploymentSpecValidationPromQLDiscrete(d *DiscreteValueOutOfList) bool {
+func isDefaultedKanaryStatefulsetSpecValidationPromQLDiscrete(d *DiscreteValueOutOfList) bool {
 	return d.TolerancePercent != nil
 }
 
-// DefaultKanaryDeployment used to default a KanaryDeployment
+// DefaultKanaryStatefulset used to default a KanaryStatefulset
 // return a list of errors in case of unvalid fields.
-func DefaultKanaryDeployment(kd *KanaryDeployment) *KanaryDeployment {
+func DefaultKanaryStatefulset(kd *KanaryStatefulset) *KanaryStatefulset {
 	defaultedKD := kd.DeepCopy()
-	defaultKanaryDeploymentSpec(&defaultedKD.Spec)
+	defaultKanaryStatefulsetSpec(&defaultedKD.Spec)
 	return defaultedKD
 }
 
-// defaultKanaryDeploymentSpec used to default a KanaryDeploymentSpec
+// defaultKanaryStatefulsetSpec used to default a KanaryStatefulsetSpec
 // return a list of errors in case of unvalid Spec.
-func defaultKanaryDeploymentSpec(spec *KanaryDeploymentSpec) {
-	defaultKanaryDeploymentSpecScale(&spec.Scale)
-	defaultKanaryDeploymentSpecTraffic(&spec.Traffic)
-	defaultKanaryDeploymentSpecValidationList(&spec.Validations)
+func defaultKanaryStatefulsetSpec(spec *KanaryStatefulsetSpec) {
+	defaultKanaryStatefulsetSpecScale(&spec.Scale)
+	defaultKanaryStatefulsetSpecTraffic(&spec.Traffic)
+	defaultKanaryStatefulsetSpecValidationList(&spec.Validations)
 }
 
-func defaultKanaryDeploymentSpecScale(s *KanaryDeploymentSpecScale) {
+func defaultKanaryStatefulsetSpecScale(s *KanaryStatefulsetSpecScale) {
 	if s.Static == nil && s.HPA == nil {
-		s.Static = &KanaryDeploymentSpecScaleStatic{}
+		s.Static = &KanaryStatefulsetSpecScaleStatic{}
 	}
 	if s.Static != nil {
-		defaultKanaryDeploymentSpecScaleStatic(s.Static)
+		defaultKanaryStatefulsetSpecScaleStatic(s.Static)
 	}
 	if s.HPA != nil {
-		defaultKanaryDeploymentSpecScaleHPA(s.HPA)
+		defaultKanaryStatefulsetSpecScaleHPA(s.HPA)
 	}
 }
 
-// defaultKanaryDeploymentSpecScaleHPA used to default HorizontalPodAutoscaler spec
-func defaultKanaryDeploymentSpecScaleHPA(s *HorizontalPodAutoscalerSpec) {
+// defaultKanaryStatefulsetSpecScaleHPA used to default HorizontalPodAutoscaler spec
+func defaultKanaryStatefulsetSpecScaleHPA(s *HorizontalPodAutoscalerSpec) {
 	if s.MinReplicas == nil {
 		s.MinReplicas = NewInt32(1)
 	}
@@ -212,31 +212,31 @@ func defaultKanaryDeploymentSpecScaleHPA(s *HorizontalPodAutoscalerSpec) {
 	}
 }
 
-func defaultKanaryDeploymentSpecScaleStatic(s *KanaryDeploymentSpecScaleStatic) {
+func defaultKanaryStatefulsetSpecScaleStatic(s *KanaryStatefulsetSpecScaleStatic) {
 	if s.Replicas == nil {
 		s.Replicas = NewInt32(1)
 	}
 }
 
-func defaultKanaryDeploymentSpecTraffic(t *KanaryDeploymentSpecTraffic) {
-	if !(t.Source == NoneKanaryDeploymentSpecTrafficSource ||
-		t.Source == ServiceKanaryDeploymentSpecTrafficSource ||
-		t.Source == KanaryServiceKanaryDeploymentSpecTrafficSource ||
-		t.Source == BothKanaryDeploymentSpecTrafficSource ||
-		t.Source == MirrorKanaryDeploymentSpecTrafficSource) {
-		t.Source = NoneKanaryDeploymentSpecTrafficSource
+func defaultKanaryStatefulsetSpecTraffic(t *KanaryStatefulsetSpecTraffic) {
+	if !(t.Source == NoneKanaryStatefulsetSpecTrafficSource ||
+		t.Source == ServiceKanaryStatefulsetSpecTrafficSource ||
+		t.Source == KanaryServiceKanaryStatefulsetSpecTrafficSource ||
+		t.Source == BothKanaryStatefulsetSpecTrafficSource ||
+		t.Source == MirrorKanaryStatefulsetSpecTrafficSource) {
+		t.Source = NoneKanaryStatefulsetSpecTrafficSource
 	}
 
 	if t.Mirror != nil {
-		defaultKanaryDeploymentSpecScaleTrafficMirror(t.Mirror)
+		defaultKanaryStatefulsetSpecScaleTrafficMirror(t.Mirror)
 	}
 }
 
-func defaultKanaryDeploymentSpecScaleTrafficMirror(t *KanaryDeploymentSpecTrafficMirror) {
+func defaultKanaryStatefulsetSpecScaleTrafficMirror(t *KanaryStatefulsetSpecTrafficMirror) {
 	// TODO nothing todo for the moment
 }
 
-func defaultKanaryDeploymentSpecValidationList(list *KanaryDeploymentSpecValidationList) {
+func defaultKanaryStatefulsetSpecValidationList(list *KanaryStatefulsetSpecValidationList) {
 	if list == nil {
 		return
 	}
@@ -257,31 +257,31 @@ func defaultKanaryDeploymentSpecValidationList(list *KanaryDeploymentSpecValidat
 	}
 
 	if list.Items == nil || len(list.Items) == 0 {
-		list.Items = []KanaryDeploymentSpecValidation{
+		list.Items = []KanaryStatefulsetSpecValidation{
 			{},
 		}
 	}
 	for id, value := range list.Items {
-		defaultKanaryDeploymentSpecValidation(&value)
+		defaultKanaryStatefulsetSpecValidation(&value)
 		list.Items[id] = value
 	}
 }
 
-func defaultKanaryDeploymentSpecValidation(v *KanaryDeploymentSpecValidation) {
+func defaultKanaryStatefulsetSpecValidation(v *KanaryStatefulsetSpecValidation) {
 	if v.Manual == nil && v.LabelWatch == nil && v.PromQL == nil {
-		defaultKanaryDeploymentSpecScaleValidationManual(v)
+		defaultKanaryStatefulsetSpecScaleValidationManual(v)
 	}
 	if v.Manual != nil {
 		if v.Manual.StatusAfterDealine == "" {
-			v.Manual.StatusAfterDealine = NoneKanaryDeploymentSpecValidationManualDeadineStatus
+			v.Manual.StatusAfterDealine = NoneKanaryStatefulsetSpecValidationManualDeadineStatus
 		}
 	}
 	if v.PromQL != nil {
-		defaultKanaryDeploymentSpecValidationPromQL(v.PromQL)
+		defaultKanaryStatefulsetSpecValidationPromQL(v.PromQL)
 
 	}
 }
-func defaultKanaryDeploymentSpecValidationPromQL(pq *KanaryDeploymentSpecValidationPromQL) {
+func defaultKanaryStatefulsetSpecValidationPromQL(pq *KanaryStatefulsetSpecValidationPromQL) {
 	if pq.PrometheusService == "" {
 		pq.PrometheusService = "prometheus:9090"
 	}
@@ -289,16 +289,16 @@ func defaultKanaryDeploymentSpecValidationPromQL(pq *KanaryDeploymentSpecValidat
 		pq.PodNameKey = "pod"
 	}
 	if pq.ContinuousValueDeviation != nil {
-		defaultKanaryDeploymentSpecValidationPromQLContinuous(pq.ContinuousValueDeviation)
+		defaultKanaryStatefulsetSpecValidationPromQLContinuous(pq.ContinuousValueDeviation)
 	}
 	if pq.DiscreteValueOutOfList != nil {
-		defaultKanaryDeploymentSpecValidationPromQLDiscreteValueOutOfList(pq.DiscreteValueOutOfList)
+		defaultKanaryStatefulsetSpecValidationPromQLDiscreteValueOutOfList(pq.DiscreteValueOutOfList)
 	}
 	if pq.ValueInRange != nil {
-		defaultKanaryDeploymentSpecValidationPromQLValueInRange(pq.ValueInRange)
+		defaultKanaryStatefulsetSpecValidationPromQLValueInRange(pq.ValueInRange)
 	}
 }
-func defaultKanaryDeploymentSpecValidationPromQLValueInRange(c *ValueInRange) {
+func defaultKanaryStatefulsetSpecValidationPromQLValueInRange(c *ValueInRange) {
 	if c.Min == nil {
 		c.Min = NewFloat64(0)
 	}
@@ -306,19 +306,19 @@ func defaultKanaryDeploymentSpecValidationPromQLValueInRange(c *ValueInRange) {
 		c.Max = NewFloat64(1)
 	}
 }
-func defaultKanaryDeploymentSpecValidationPromQLContinuous(c *ContinuousValueDeviation) {
+func defaultKanaryStatefulsetSpecValidationPromQLContinuous(c *ContinuousValueDeviation) {
 	if c.MaxDeviationPercent == nil {
 		c.MaxDeviationPercent = NewFloat64(10)
 	}
 }
-func defaultKanaryDeploymentSpecValidationPromQLDiscreteValueOutOfList(d *DiscreteValueOutOfList) {
+func defaultKanaryStatefulsetSpecValidationPromQLDiscreteValueOutOfList(d *DiscreteValueOutOfList) {
 	if d.TolerancePercent == nil {
 		d.TolerancePercent = NewUInt(0)
 	}
 }
-func defaultKanaryDeploymentSpecScaleValidationManual(v *KanaryDeploymentSpecValidation) {
-	v.Manual = &KanaryDeploymentSpecValidationManual{
-		StatusAfterDealine: NoneKanaryDeploymentSpecValidationManualDeadineStatus,
+func defaultKanaryStatefulsetSpecScaleValidationManual(v *KanaryStatefulsetSpecValidation) {
+	v.Manual = &KanaryStatefulsetSpecValidationManual{
+		StatusAfterDealine: NoneKanaryStatefulsetSpecValidationManualDeadineStatus,
 	}
 }
 

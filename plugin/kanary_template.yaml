@@ -31,5 +31,5 @@ spec:
   shortDescription: kubectl plugin for kanary (canary deployment solution).
   description: |
     This plugin provides helpers to user the canary deployment solution Kanary (http://github.com/k8s-kanary/kanary)
-    It helps to visualize KanaryDeployment resources information, and generates
+    It helps to visualize KanaryStatefulset resources information, and generates
     the corresponding artifact from a kubernetes Deployment.

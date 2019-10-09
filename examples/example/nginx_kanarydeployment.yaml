@@ -1,5 +1,5 @@
 apiVersion: kanary.k8s-operators.dev/v1alpha1
-kind: KanaryDeployment
+kind: KanaryStatefulset
 metadata:
   name: nginx-dep
   labels:
