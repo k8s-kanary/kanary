@@ -21,18 +21,14 @@ spec:
     type: string
     description: StatefulSet Name used for the KanaryStatefulset.
     JSONPath: ".spec.statefulSetName"
-  - name: Service
-    type: string
-    description: Service Name used for the KanaryStatefulset.
-    JSONPath: ".spec.serviceName"
-  - name: Traffic
-    type: string
-    description: Traffic type used for the KanaryStatefulset.
-    JSONPath: ".spec.traffic.source"
-  - name: Scale
-    type: string
-    description: Scale type used for the KanaryStatefulset.
-    JSONPath: ".status.report.scale"
+  - name: KanaryTest
+    type: bool
+    description: 是否通过了 kanary test
+    JSONPath: ".status.kanaryTested"
+  - name: Batches
+    type: integer
+    description: Batches progress. eg: 2/4  表示哪个批次
+    JSONPath: ".status.batches"
   - name: Validation
     type: string
     description: Validation configuration used for the KanaryStatefulset.
