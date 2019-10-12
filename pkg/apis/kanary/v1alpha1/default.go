@@ -5,8 +5,6 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"k8s.io/api/autoscaling/v2beta1"
-	corev1 "k8s.io/api/core/v1"
 )
 
 // DefaultCPUUtilization is the default value for CPU utilization, provided no other
@@ -17,64 +15,10 @@ const DefaultCPUUtilization = 80
 // IsDefaultedKanaryStatefulset used to know if a KanaryStatefulset is already defaulted
 // returns true if yes, else no
 func IsDefaultedKanaryStatefulset(kd *KanaryStatefulset) bool {
-	if !IsDefaultedKanaryStatefulsetSpecScale(&kd.Spec.Scale) {
-		return false
-	}
-	if !IsDefaultedKanaryStatefulsetSpecTraffic(&kd.Spec.Traffic) {
-		return false
-	}
 	if !IsDefaultedKanaryStatefulsetSpecValidationList(&kd.Spec.Validations) {
 		return false
 	}
-
 	return true
-}
-
-// IsDefaultedKanaryStatefulsetSpecScale used to know if a KanaryStatefulsetSpecScale is already defaulted
-// returns true if yes, else no
-func IsDefaultedKanaryStatefulsetSpecScale(scale *KanaryStatefulsetSpecScale) bool {
-	if scale.Static == nil && scale.HPA == nil {
-		return false
-	}
-
-	if scale.Static != nil {
-		if scale.Static.Replicas == nil {
-			return false
-		}
-	}
-
-	if scale.HPA != nil {
-		if scale.HPA.MinReplicas == nil {
-			return false
-		}
-
-		if scale.HPA.MaxReplicas == 0 {
-			return false
-		}
-
-		if scale.HPA.Metrics == nil {
-			return false
-		}
-
-		if len(scale.HPA.Metrics) == 0 {
-			return false
-		}
-	}
-
-	return true
-}
-
-// IsDefaultedKanaryStatefulsetSpecTraffic used to know if a KanaryStatefulsetSpecTraffic is already defaulted
-// returns true if yes, else no
-func IsDefaultedKanaryStatefulsetSpecTraffic(t *KanaryStatefulsetSpecTraffic) bool {
-	if t.Source == NoneKanaryStatefulsetSpecTrafficSource ||
-		t.Source == ServiceKanaryStatefulsetSpecTrafficSource ||
-		t.Source == KanaryServiceKanaryStatefulsetSpecTrafficSource ||
-		t.Source == BothKanaryStatefulsetSpecTrafficSource ||
-		t.Source == MirrorKanaryStatefulsetSpecTrafficSource {
-		return true
-	}
-	return false
 }
 
 // IsDefaultedKanaryStatefulsetSpecValidation used to know if a KanaryStatefulsetSpecValidation is already defaulted
@@ -167,74 +111,9 @@ func isDefaultedKanaryStatefulsetSpecValidationPromQLDiscrete(d *DiscreteValueOu
 // return a list of errors in case of unvalid fields.
 func DefaultKanaryStatefulset(kd *KanaryStatefulset) *KanaryStatefulset {
 	defaultedKD := kd.DeepCopy()
-	defaultKanaryStatefulsetSpec(&defaultedKD.Spec)
 	return defaultedKD
 }
 
-// defaultKanaryStatefulsetSpec used to default a KanaryStatefulsetSpec
-// return a list of errors in case of unvalid Spec.
-func defaultKanaryStatefulsetSpec(spec *KanaryStatefulsetSpec) {
-	defaultKanaryStatefulsetSpecScale(&spec.Scale)
-	defaultKanaryStatefulsetSpecTraffic(&spec.Traffic)
-	defaultKanaryStatefulsetSpecValidationList(&spec.Validations)
-}
-
-func defaultKanaryStatefulsetSpecScale(s *KanaryStatefulsetSpecScale) {
-	if s.Static == nil && s.HPA == nil {
-		s.Static = &KanaryStatefulsetSpecScaleStatic{}
-	}
-	if s.Static != nil {
-		defaultKanaryStatefulsetSpecScaleStatic(s.Static)
-	}
-	if s.HPA != nil {
-		defaultKanaryStatefulsetSpecScaleHPA(s.HPA)
-	}
-}
-
-// defaultKanaryStatefulsetSpecScaleHPA used to default HorizontalPodAutoscaler spec
-func defaultKanaryStatefulsetSpecScaleHPA(s *HorizontalPodAutoscalerSpec) {
-	if s.MinReplicas == nil {
-		s.MinReplicas = NewInt32(1)
-	}
-	if s.MaxReplicas == 0 {
-		s.MaxReplicas = int32(10)
-	}
-	if s.Metrics == nil {
-		s.Metrics = []v2beta1.MetricSpec{
-			{
-				Type: v2beta1.ResourceMetricSourceType,
-				Resource: &v2beta1.ResourceMetricSource{
-					Name:                     corev1.ResourceCPU,
-					TargetAverageUtilization: NewInt32(DefaultCPUUtilization),
-				},
-			},
-		}
-	}
-}
-
-func defaultKanaryStatefulsetSpecScaleStatic(s *KanaryStatefulsetSpecScaleStatic) {
-	if s.Replicas == nil {
-		s.Replicas = NewInt32(1)
-	}
-}
-
-func defaultKanaryStatefulsetSpecTraffic(t *KanaryStatefulsetSpecTraffic) {
-	if !(t.Source == NoneKanaryStatefulsetSpecTrafficSource ||
-		t.Source == ServiceKanaryStatefulsetSpecTrafficSource ||
-		t.Source == KanaryServiceKanaryStatefulsetSpecTrafficSource ||
-		t.Source == BothKanaryStatefulsetSpecTrafficSource ||
-		t.Source == MirrorKanaryStatefulsetSpecTrafficSource) {
-		t.Source = NoneKanaryStatefulsetSpecTrafficSource
-	}
-
-	if t.Mirror != nil {
-		defaultKanaryStatefulsetSpecScaleTrafficMirror(t.Mirror)
-	}
-}
-
-func defaultKanaryStatefulsetSpecScaleTrafficMirror(t *KanaryStatefulsetSpecTrafficMirror) {
-	// TODO nothing todo for the moment
-}
 
 func defaultKanaryStatefulsetSpecValidationList(list *KanaryStatefulsetSpecValidationList) {
 	if list == nil {
