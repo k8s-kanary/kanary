@@ -1,0 +1,3 @@
+version: "1"
+domain: operators
+repo: github.com/k8s-kanasry/kanary
