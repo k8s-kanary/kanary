@@ -123,7 +123,6 @@ func (r *ReconcileKanaryStatefulset) Reconcile(request reconcile.Request) (recon
 	if needsReturn {
 		return updateKanaryStatefulsetStatus(r.client, reqLogger, instance, metav1.Now(), result, err)
 	}
-
 	
 	//Check scheduling
 	reqLogger.Info("Scheduling")
@@ -135,7 +134,6 @@ func (r *ReconcileKanaryStatefulset) Reconcile(request reconcile.Request) (recon
 	return reconcile.Result{}, nil
 	
 	/*
-	
 	canarydeployment, needsReturn, result, err = r.manageCanaryDeploymentCreation(reqLogger, instance, utils.GetCanaryDeploymentName(instance))
 	if needsReturn {
 		return updateKanaryStatefulsetStatus(r.client, reqLogger, instance, metav1.Now(), result, err)
@@ -152,7 +150,6 @@ func (r *ReconcileKanaryStatefulset) Reconcile(request reconcile.Request) (recon
 	
 	reqLogger.Info("Applying")
 	return strategy.Apply(r.client, reqLogger, instance, deployment, canarydeployment, statefulset)
-	
 	*/
 }
 
@@ -261,7 +258,7 @@ func updateKanaryStatefulsetStatus(kclient client.Client, reqLogger logr.Logger,
 
 
 func (r *ReconcileKanaryStatefulset) getStatefulSet(reqLogger logr.Logger, kd *kanaryv1alpha1.KanaryStatefulset) (*kruisev1alpha1.StatefulSet, bool, reconcile.Result, error) {
-	statefulset, err := kuriseclient.GetGenericClient().KruiseClient.AppsV1alpha1().StatefulSets(kd.Namespace).Get(kd.Spec.StatefulSetName, metav1.GetOptions{})
+	statefulset, err := kuriseclient.GetGenericClient().KruiseClient.AppsV1alpha1().StatefulSets(kd.Namespace).Get(kd.Spec.StatefulSetName, )
 	if err != nil {
 		reqLogger.Error(err, "failed to get statefulset")
 		return &kruisev1alpha1.StatefulSet{}, true, reconcile.Result{}, err

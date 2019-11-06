@@ -146,7 +146,7 @@ type StatefulsetTemplate struct {
 	
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 	
-	Spec v1beta1.StatefulSet `json:"spec,omitempty" protobuf:"bytes,2,opt,name=spec"`
+	Spec v1beta1.StatefulSetSpec `json:"spec,omitempty" protobuf:"bytes,2,opt,name=spec"`
 }
 
 // KanaryStatefulsetCondition describes the state of a deployment at a certain point.

@@ -130,16 +130,10 @@ func IsKanaryStatefulsetScheduled(status *kanaryv1alpha1.KanaryStatefulsetStatus
 	return false
 }
 
-// IsKanaryStatefulsetDeploymentUpdated returns true if the KanaryStatefulset has lead to deployment update
-func IsKanaryStatefulsetDeploymentUpdated(status *kanaryv1alpha1.KanaryStatefulsetStatus) bool {
-	if status == nil {
-		return false
-	}
-	id := getIndexForConditionType(status, kanaryv1alpha1.DeploymentUpdatedKanaryStatefulsetConditionType)
-	if id >= 0 && status.Conditions[id].Status == corev1.ConditionTrue {
-		return true
-	}
-	return false
+// IsKanaryStatefulsetDeploymentUpdated returns true if the KanaryStatefulset has lead to newstatefulset update
+// return all true
+func IsKanaryStatefulsetUpdated(status *kanaryv1alpha1.KanaryStatefulsetStatus) bool {
+	return true
 }
 
 // IsKanaryStatefulsetValidationRunning returns true if the KanaryStatefulset is runnning
@@ -156,7 +150,7 @@ func IsKanaryStatefulsetValidationRunning(status *kanaryv1alpha1.KanaryStatefuls
 
 // IsKanaryStatefulsetValidationCompleted returns true if the KanaryStatefulset is runnning
 func IsKanaryStatefulsetValidationCompleted(status *kanaryv1alpha1.KanaryStatefulsetStatus) bool {
-	return IsKanaryStatefulsetFailed(status) || IsKanaryStatefulsetSucceeded(status) || IsKanaryStatefulsetDeploymentUpdated(status)
+	return IsKanaryStatefulsetFailed(status) || IsKanaryStatefulsetSucceeded(status) || IsKanaryStatefulsetUpdated(status)
 }
 
 func getIndexForConditionType(status *kanaryv1alpha1.KanaryStatefulsetStatus, t kanaryv1alpha1.KanaryStatefulsetConditionType) int {
@@ -181,8 +175,8 @@ func getReportStatus(status *kanaryv1alpha1.KanaryStatefulsetStatus) string {
 		return string(v1alpha1.FailedKanaryStatefulsetConditionType)
 	}
 
-	if IsKanaryStatefulsetDeploymentUpdated(status) {
-		return string(v1alpha1.DeploymentUpdatedKanaryStatefulsetConditionType)
+	if IsKanaryStatefulsetUpdated(status) {
+		return "kanary statefulset updated"
 	}
 
 	if IsKanaryStatefulsetSucceeded(status) {
@@ -223,22 +217,10 @@ func getValidation(kd *kanaryv1alpha1.KanaryStatefulset) string {
 	return strings.Join(list, ",")
 }
 
-func getScale(kd *kanaryv1alpha1.KanaryStatefulset) string {
-	if kd.Spec.Scale.HPA == nil {
-		return "static"
-	}
-	return "hpa"
-}
-
-func getTraffic(kd *kanaryv1alpha1.KanaryStatefulset) string {
-	return string(kd.Spec.Traffic.Source)
-}
 
 func updateStatusReport(kd *kanaryv1alpha1.KanaryStatefulset, status *kanaryv1alpha1.KanaryStatefulsetStatus) {
 	status.Report = kanaryv1alpha1.KanaryStatefulsetStatusReport{
 		Status:     getReportStatus(status),
 		Validation: getValidation(kd),
-		Scale:      getScale(kd),
-		Traffic:    getTraffic(kd),
 	}
 }

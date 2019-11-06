@@ -19,8 +19,6 @@ import (
 
 	kanaryv1alpha1 "github.com/k8s-kanary/kanary/pkg/apis/kanary/v1alpha1"
 	"github.com/k8s-kanary/kanary/pkg/config"
-	"github.com/k8s-kanary/kanary/pkg/controller/kanarystatefulset/strategies/scale"
-	"github.com/k8s-kanary/kanary/pkg/controller/kanarystatefulset/strategies/traffic"
 	"github.com/k8s-kanary/kanary/pkg/controller/kanarystatefulset/strategies/validation"
 	"github.com/k8s-kanary/kanary/pkg/controller/kanarystatefulset/utils"
 )
@@ -32,33 +30,6 @@ type Interface interface {
 
 // NewStrategy return new instance of the strategy
 func NewStrategy(spec *kanaryv1alpha1.KanaryStatefulsetSpec) (Interface, error) {
-	scaleStatic := scale.NewStatic(spec.Scale.Static)
-	scaleHPA := scale.NewHPA(spec.Scale.HPA)
-	scaleImpls := map[scale.Interface]bool{
-		scaleStatic: false,
-		scaleHPA:    false,
-	}
-	if spec.Scale.HPA != nil {
-		scaleImpls[scaleHPA] = true
-	} else {
-		scaleImpls[scaleStatic] = true
-	}
-
-	trafficKanaryService := traffic.NewKanaryService(&spec.Traffic)
-	trafficMirror := traffic.NewMirror(&spec.Traffic)
-	trafficImpls := map[traffic.Interface]bool{
-		trafficKanaryService: false,
-		trafficMirror:        false,
-	}
-
-	switch spec.Traffic.Source {
-	case kanaryv1alpha1.ServiceKanaryStatefulsetSpecTrafficSource, kanaryv1alpha1.KanaryServiceKanaryStatefulsetSpecTrafficSource, kanaryv1alpha1.BothKanaryStatefulsetSpecTrafficSource:
-		trafficImpls[trafficKanaryService] = true
-	case kanaryv1alpha1.MirrorKanaryStatefulsetSpecTrafficSource:
-		trafficImpls[trafficMirror] = true
-	default:
-	}
-
 	var validationsImpls []validation.Interface
 	for _, v := range spec.Validations.Items {
 		if v.Manual != nil {
@@ -69,18 +40,13 @@ func NewStrategy(spec *kanaryv1alpha1.KanaryStatefulsetSpec) (Interface, error) 
 			validationsImpls = append(validationsImpls, validation.NewPromql(&spec.Validations, &v))
 		}
 	}
-
 	return &strategy{
-		scale:               scaleImpls,
-		traffic:             trafficImpls,
 		validations:         validationsImpls,
 		subResourceDisabled: os.Getenv(config.KanaryStatusSubresourceDisabledEnvVar) == "1",
 	}, nil
 }
 
 type strategy struct {
-	scale               map[scale.Interface]bool
-	traffic             map[traffic.Interface]bool
 	validations         []validation.Interface
 	subResourceDisabled bool
 }
@@ -93,63 +59,6 @@ func (s *strategy) Apply(kclient client.Client, reqLogger logr.Logger, kd *kanar
 }
 
 func (s *strategy) process(kclient client.Client, reqLogger logr.Logger, kd *kanaryv1alpha1.KanaryStatefulset, dep, canarydep *appsv1beta1.Deployment, sts *kruisev1alpha1.StatefulSet) (*kanaryv1alpha1.KanaryStatefulsetStatus, reconcile.Result, error) {
-
-	reqLogger.Info("Cleanup scale")
-	// First cleanup if needed
-	for impl, activated := range s.scale {
-		if !activated {
-			status, result, err := impl.Clear(kclient, reqLogger, kd, canarydep, sts)
-			if err != nil {
-				return status, result, fmt.Errorf("error during Clean processing, err: %v", err)
-			}
-			if needReturn(&result) {
-				return status, result, err
-			}
-		}
-	}
-
-	reqLogger.Info("Cleanup traffic")
-	// First process cleanup
-	for impl, activated := range s.traffic {
-		if !activated {
-			status, result, err := impl.Cleanup(kclient, reqLogger, kd, canarydep, sts)
-			if err != nil {
-				return status, result, fmt.Errorf("error during Traffic Cleanup processing, err: %v", err)
-			}
-			if needReturn(&result) {
-				return status, result, err
-			}
-		}
-	}
-
-	reqLogger.Info("Implement scale")
-	// then scale if need
-	for impl, activated := range s.scale {
-		if activated {
-			status, result, err := impl.Scale(kclient, reqLogger, kd, canarydep, sts)
-			if err != nil {
-				return status, result, fmt.Errorf("error during Scale processing, err: %v", err)
-			}
-			if needReturn(&result) {
-				return status, result, err
-			}
-		}
-	}
-
-	reqLogger.Info("Implement traffic")
-	// Then apply Traffic configuration
-	for impl, activated := range s.traffic {
-		if activated {
-			status, result, err := impl.Traffic(kclient, reqLogger, kd, canarydep, sts)
-			if err != nil {
-				return status, result, fmt.Errorf("error during Traffic processing, err: %v", err)
-			}
-			if needReturn(&result) {
-				return status, result, err
-			}
-
-		}
-	}
 
 	//before going to validation step, let's check that initial delay period is completed
 	if reaminingDelay, done := validation.IsInitialDelayDone(kd); !done {
@@ -239,7 +148,7 @@ func (s *strategy) process(kclient client.Client, reqLogger logr.Logger, kd *kan
 			return &kd.Status, reconcile.Result{}, nil // nothing else to do... the kanary succeeded, and we are in dry-run mode
 		}
 		status := kd.Status.DeepCopy()
-		utils.UpdateKanaryStatefulsetStatusCondition(status, metav1.Now(), kanaryv1alpha1.DeploymentUpdatedKanaryStatefulsetConditionType, corev1.ConditionTrue, "Deployment updated successfully", false)
+		// utils.UpdateKanaryStatefulsetStatusCondition(status, metav1.Now(), kanaryv1alpha1.DeploymentUpdatedKanaryStatefulsetConditionType, corev1.ConditionTrue, "Deployment updated successfully", false)
 		return status, reconcile.Result{Requeue: true}, nil
 	}
 
